@@ -6,71 +6,39 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     :root{
-      --bg:#000;
+      --bg:#000000;
       --card:#0d0d0d;
       --muted:#b5b5b5;
       --accent:#00c8ff;
+      --accent-2:#12d0a6;
       --input-bg:#0a0a0a;
       --card-border:#111;
-      --green:#2fd4a6;
+      --text:#e6f7ff;
     }
-    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:#fff}
-    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;}
-    .card{background:var(--card);padding:26px;border-radius:16px;width:100%;max-width:800px; box-shadow:0 10px 30px rgba(0,200,255,0.08);border:1px solid var(--card-border);box-sizing:border-box;}
-    h2{text-align:center;margin:0 0 18px 0;color:var(--accent);font-weight:600;letter-spacing:0.2px;font-size:20px;}
-    .field{margin-bottom:12px;}
-    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
-    
-    /* INPUT STYLES */
-    input[type="text"], select {
-      width:100%;
-      padding:12px 12px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.04);
-      background:var(--input-bg);
-      color:#fff;
-      font-size:15px;
-      box-sizing:border-box;
-      outline:none;
-    }
-    /* Ensure arrow is visible */
-    select {
-      -webkit-appearance: auto;
-      -moz-appearance: auto;
-      appearance: auto;
-      background-color: var(--input-bg);
-      cursor: pointer;
-    }
-
-    .row{display:flex;gap:10px;}
-    .col{flex:1;}
-    button{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;}
-    #msg{ text-align:center;margin-top:10px;color:var(--accent);font-size:13px }
-    
-    /* MARKSHEET STYLES */
-    #outBox{margin-top:20px;background:#fff;color:#000;padding:0;border-radius:4px;overflow:hidden;font-family:'Times New Roman', Times, serif;}
-    .paper{padding:20px;box-sizing:border-box;width:100%;overflow-x:auto;}
-    .header-text{text-align:center;margin-bottom:15px;}
-    .header-text h1{font-size:18px;margin:0;font-weight:bold;text-transform:uppercase;}
-    .header-text h3{font-size:14px;margin:4px 0;font-weight:bold;color:#d00000;}
-    
-    .info-table, .marks-table, .sgpa-table{width:100%;border-collapse:collapse;margin-bottom:15px;font-size:12px;}
-    .info-table td, .marks-table th, .marks-table td, .sgpa-table th, .sgpa-table td{border:1px solid #000;padding:6px;}
-    
-    .info-label{font-weight:bold;width:140px;}
-    .section-title{font-size:12px;font-weight:bold;margin-bottom:5px;text-transform:uppercase;color:#555;}
-    .marks-table th{background:#f2f2f2;text-align:center;font-weight:bold;}
-    .marks-table td{text-align:center;}
-    .marks-table td:nth-child(2){text-align:left;}
-    .sgpa-table th{background:#f2f2f2;text-align:center;}
-    .sgpa-table td{text-align:center;font-weight:bold;}
-    .remarks-box{border:1px solid #000;padding:8px;margin-bottom:10px;font-weight:bold;font-size:13px;}
-    .footer-notes{font-size:10px;color:#444;line-height:1.4;}
-    .actions{display:flex;gap:12px;margin-top:12px;padding:0 20px 20px 20px;background:var(--card);}
-    .btn-pdf{flex:1;padding:12px;border-radius:10px;border:none;background:var(--green);color:#002; font-weight:700;cursor:pointer}
-    .muted-center{text-align:center;color:#9aa0a6;margin-top:12px;font-size:13px}
-
-    @media (max-width:420px){.card{padding:18px;border-radius:12px;max-width:360px;}h2{font-size:18px}input[type="text"],select{padding:11px;font-size:15px}}
+    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:Inter, system-ui, Arial, sans-serif;color:var(--text)}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+    .card{background:var(--card);padding:26px;border-radius:16px;width:100%;max-width:420px;box-shadow: 0 10px 30px rgba(0,200,255,0.08), inset 0 1px 0 rgba(255,255,255,0.02);border:1px solid var(--card-border);box-sizing:border-box}
+    h2{text-align:center;margin:0 0 18px 0;color:var(--accent);font-weight:600;letter-spacing:0.2px;font-size:20px}
+    .field{margin-bottom:12px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type="text"], select{width:100%;padding:12px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--input-bg);color:#fff;font-size:15px;box-sizing:border-box;outline:none;-webkit-appearance:none}
+    .row{display:flex;gap:10px}
+    .col{flex:1}
+    button{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px}
+    #outBox{margin-top:14px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid var(--card-border);max-height:520px;overflow:auto;color:var(--text);font-size:14px}
+    #msg{text-align:center;margin-top:10px;color:var(--accent);font-size:13px}
+    .summary-table{width:100%;border-collapse:collapse;margin-top:8px}
+    .summary-table td{padding:10px;border:1px solid rgba(255,255,255,0.03)}
+    .subjects-table{width:100%;border-collapse:collapse;margin-top:10px}
+    .subjects-table th,.subjects-table td{padding:8px;border:1px solid rgba(255,255,255,0.04);text-align:left}
+    .subjects-table th{background:rgba(255,255,255,0.02);color:var(--muted)}
+    .muted{color:var(--muted)}
+    .sgpa{font-weight:700;margin-top:10px;color:var(--text)}
+    .download-row{display:flex;gap:12px;margin-top:12px}
+    .btn-ghost{flex:1;padding:10px;border-radius:10px;border:none;background:transparent;color:var(--muted);cursor:pointer}
+    .btn-pdf{flex:1;padding:10px;border-radius:10px;border:none;background:var(--accent-2);color:#000;cursor:pointer;font-weight:700}
+    @media (max-width:420px){.card{padding:18px;border-radius:12px;max-width:360px}h2{font-size:18px}input[type="text"], select{padding:11px;font-size:15px}}
+    .madeby{margin-top:12px;text-align:center;color:rgba(255,255,255,0.5);font-size:13px}
   </style>
 </head>
 <body>
@@ -85,11 +53,18 @@
 
       <div class="field">
         <label for="sem">Semester</label>
-        <select id="sem" aria-label="Semester">
-          <option value="I">I</option><option value="II">II</option><option value="III" selected>III</option>
-          <option value="IV">IV</option><option value="V">V</option><option value="VI">VI</option>
-          <option value="VII">VII</option><option value="VIII">VIII</option>
-        </select>
+        <div>
+          <select id="sem" aria-label="Semester">
+            <option value="I">I</option>
+            <option value="II">II</option>
+            <option value="III" selected>III</option>
+            <option value="IV">IV</option>
+            <option value="V">V</option>
+            <option value="VI">VI</option>
+            <option value="VII">VII</option>
+            <option value="VIII">VIII</option>
+          </select>
+        </div>
       </div>
 
       <div class="row" style="margin-top:6px">
@@ -100,81 +75,197 @@
             <option selected>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
           </select>
         </div>
+
         <div class="col field">
           <label for="year">Exam Year</label>
-          <select id="year" aria-label="Exam year">
-            <!-- JS will fill 2025-2030 here -->
-          </select>
+          <select id="year" aria-label="Exam year"></select>
         </div>
       </div>
 
       <button id="go">Get Result</button>
 
       <div id="msg" role="status" aria-live="polite"></div>
+      <div id="outBox" aria-live="polite"></div>
 
-      <!-- Result area -->
-      <div id="outBox" aria-live="polite" hidden>
-        <div class="paper" id="printArea">
-          <div class="header-text">
-            <h1>Bihar Engineering University, Patna</h1>
-            <h3 id="examTitle">B.Tech. Examination</h3>
-          </div>
-
-          <table class="info-table">
-            <tr>
-              <td class="info-label">Semester:</td><td id="dSem"></td>
-              <td class="info-label">Examination:</td><td id="dExam"></td>
-            </tr>
-            <tr>
-              <td class="info-label">Registration No:</td><td colspan="3" id="dReg"></td>
-            </tr>
-            <tr>
-              <td class="info-label">Student Name:</td><td colspan="3" id="dName"></td>
-            </tr>
-            <tr>
-              <td class="info-label">Father's Name:</td><td id="dFather"></td>
-              <td class="info-label">Mother's Name:</td><td id="dMother"></td>
-            </tr>
-            <tr>
-              <td class="info-label">College Name:</td><td colspan="3" id="dCollege"></td>
-            </tr>
-            <tr>
-              <td class="info-label">Course Name:</td><td colspan="3" id="dCourse"></td>
-            </tr>
-          </table>
-
-          <div id="theorySection"></div>
-          <div id="practicalSection"></div>
-
-          <div class="section-title" style="margin-top:20px;">SGPA / CGPA</div>
-          <table class="sgpa-table">
-            <thead>
-              <tr>
-                <th>Semester</th><th>I</th><th>II</th><th>III</th><th>IV</th><th>V</th><th>VI</th><th>VII</th><th>VIII</th><th>Cur. CGPA</th>
-              </tr>
-            </thead>
-            <tbody id="sgpaBody"></tbody>
-          </table>
-
-          <div class="remarks-box">Remarks: <span id="dRemarks">PASS</span></div>
-
-          <div class="footer-notes">
-            <b>Note:</b><br>
-            ESE: End Semester Exam | IA: Internal Assessment | SGPA: Semester Grade Point Average | CGPA: Cumulative Grade Point Average<br>
-            AB: Absent | NA: Not Applicable | *: Passed Under Regulation(UR) | UMC: Unfair Mean Case<br>
-            <i>This is a computer-generated statement.</i>
-          </div>
-        </div>
-
-        <div class="actions" id="actionsRow">
-          <button class="btn-pdf" id="downloadPdf">Download / Print PDF</button>
-        </div>
+      <div class="download-row" id="downloads" style="display:none">
+        <button class="btn-pdf" id="downloadPdf">Download PDF</button>
       </div>
 
-      <div class="muted-center">Made with ♥ by Aryan</div>
+      <div class="madeby">Made with ♥ by Aryan</div>
     </div>
   </div>
 
-<script src="script.js"></script>
+<script>
+  // Populate years 2020-2030
+  (function populateYears(){
+    const start = 2020, end = 2030;
+    const sel = document.getElementById('year');
+    const cur = new Date().getFullYear();
+    for(let y=start;y<=end;y++){
+      const o=document.createElement('option');
+      o.value=y; o.textContent=y;
+      if(y===Math.min(Math.max(cur,start),end)) o.selected=true;
+      sel.appendChild(o);
+    }
+  })();
+
+  const apiBase = '/api/result'; // Vercel serverless path
+
+  function formatSubjectsTable(list){
+    if(!Array.isArray(list) || list.length===0) return '';
+    let html = '<table class="subjects-table"><thead><tr><th>Subject</th><th>IA</th><th>ESE</th><th>Total</th><th>Grade</th><th>Credit</th></tr></thead><tbody>';
+    for(const s of list){
+      const name = s.name || s.subject || s.code || '';
+      const ia = s.ia ?? s.internal ?? '';
+      const ese = s.ese ?? s.end ?? '';
+      const total = s.total ?? '';
+      const grade = s.grade ?? '';
+      const credit = s.credit ?? '';
+      html += `<tr><td>${escapeHtml(String(name))}</td><td>${escapeHtml(String(ia))}</td><td>${escapeHtml(String(ese))}</td><td>${escapeHtml(String(total))}</td><td>${escapeHtml(String(grade))}</td><td>${escapeHtml(String(credit))}</td></tr>`;
+    }
+    html += '</tbody></table>';
+    return html;
+  }
+
+  function computeCGPA(data){
+    // Prefer explicit cgpa field
+    if(data.cgpa) return String(data.cgpa);
+    // If sgpa array present, average non-null numeric values
+    if(Array.isArray(data.sgpa) && data.sgpa.length){
+      const nums = data.sgpa.map(x=>parseFloat(x)).filter(n=>!isNaN(n));
+      if(nums.length===0) return 'N/A';
+      const avg = (nums.reduce((a,b)=>a+b,0)/nums.length);
+      return avg.toFixed(2);
+    }
+    return 'N/A';
+  }
+
+  function renderResult(data){
+    // Build top summary table (Registration No / Semester / Name / Exam / College / Course)
+    const reg = data.redg_no || data.reg_no || data.registration || '';
+    const sem = data.semester || document.getElementById('sem').value || '';
+    const name = data.name || data.student_name || (data.student && data.student.name) || '';
+    const exam = data.exam_held || `${document.getElementById('month').value}/${document.getElementById('year').value}`;
+    const college = data.college_name || data.college || (data.student && data.student.college) || '';
+    const course = data.course || data.course_name || '';
+    let out = `<table class="summary-table"><tr><td><strong>Registration No:</strong></td><td>${escapeHtml(String(reg))}</td></tr>
+               <tr><td><strong>Semester:</strong></td><td>${escapeHtml(String(sem))}</td></tr>
+               <tr><td><strong>Name:</strong></td><td>${escapeHtml(String(name))}</td></tr>
+               <tr><td><strong>Exam:</strong></td><td>${escapeHtml(String(exam))}</td></tr>
+               <tr><td><strong>College:</strong></td><td>${escapeHtml(String(college))}</td></tr>
+               <tr><td><strong>Course:</strong></td><td>${escapeHtml(String(course))}</td></tr>
+               </table>`;
+
+    // Subjects: theorySubjects and practicalSubjects (use fallbacks)
+    const theory = data.theorySubjects || data.theory || data.theory_subjects || [];
+    const practical = data.practicalSubjects || data.practical || data.practical_subjects || [];
+
+    if(theory.length){
+      out += `<h3 style="margin-top:12px;color:var(--muted)">Theory Subjects</h3>` + formatSubjectsTable(theory);
+    }
+    if(practical.length){
+      out += `<h3 style="margin-top:12px;color:var(--muted)">Practical Subjects</h3>` + formatSubjectsTable(practical);
+    }
+
+    // SGPA / CGPA: prefer data.cgpa or compute
+    const cgpa = computeCGPA(data);
+    out += `<div class="sgpa"><span class="muted">SGPA / CGPA:</span> ${escapeHtml(String(cgpa))}</div>`;
+
+    document.getElementById('outBox').innerHTML = out;
+    // show download PDF button
+    document.getElementById('downloads').style.display = 'flex';
+    window.latestResultForPdf = {meta:{reg,sem,name,exam,college,course},theory,practical,cgpa};
+  }
+
+  document.getElementById('go').addEventListener('click', async function(){
+    const redg = document.getElementById('redg').value.trim();
+    const sem = document.getElementById('sem').value.trim();
+    const month = document.getElementById('month').value.trim();
+    const year = document.getElementById('year').value.trim();
+    if(!redg){ alert('Enter registration number'); return; }
+    const exam_held = `${month}/${year}`;
+
+    document.getElementById('msg').textContent = 'Loading...';
+    document.getElementById('outBox').textContent = '';
+
+    const url = `${apiBase}?redg_no=${encodeURIComponent(redg)}&semester=${encodeURIComponent(sem)}&year=${encodeURIComponent(year)}&exam_held=${encodeURIComponent(exam_held)}`;
+    try{
+      const r = await fetch(url);
+      const text = await r.text();
+      // Try parse json safely
+      let j;
+      try{ j = JSON.parse(text); }
+      catch{
+        // If returned a JSON object string inside text, try to extract braces
+        const start = text.indexOf('{');
+        const end = text.lastIndexOf('}');
+        if(start>=0 && end>start){
+          try{ j = JSON.parse(text.slice(start,end+1)); }catch(e){ j = { data: { raw: text } }; }
+        } else j = { data: { raw: text } };
+      }
+
+      document.getElementById('msg').textContent = '';
+      if(j.error){ document.getElementById('outBox').textContent = 'Error: ' + j.error; return; }
+
+      const data = j.data || j;
+      if(data.raw){
+        // if raw HTML/text returned, show snippet
+        document.getElementById('outBox').textContent = String(data.raw).slice(0,8000) + (String(data.raw).length>8000 ? '\n\n...truncated' : '');
+        return;
+      }
+      // render cleaned result
+      renderResult(data);
+    }catch(err){
+      document.getElementById('msg').textContent = '';
+      document.getElementById('outBox').textContent = 'Fetch error: ' + (err.message || err);
+    }
+  });
+
+  // PDF download - opens printable view
+  document.getElementById('downloadPdf').addEventListener('click', function(){
+    const d = window.latestResultForPdf;
+    if(!d) return alert('No result to print');
+    let html = `<div style="font-family:Arial;padding:18px;color:#000;background:#fff">`;
+    html += `<h2 style="text-align:center;">BEU Result</h2>`;
+    html += `<table style="width:100%;border-collapse:collapse;margin-top:8px"><tr><td style="padding:8px;border:1px solid #ccc"><strong>Registration No:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.reg)}</td></tr>`;
+    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>Semester:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.sem)}</td></tr>`;
+    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>Name:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.name)}</td></tr>`;
+    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>Exam:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.exam)}</td></tr>`;
+    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>College:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.college)}</td></tr>`;
+    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>Course:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.course)}</td></tr>`;
+    html += `</table>`;
+
+    function tableHtml(list,title){
+      if(!Array.isArray(list) || list.length===0) return '';
+      let out = `<h3 style="margin-top:12px">${escapeHtml(title)}</h3>`;
+      out += `<table style="width:100%;border-collapse:collapse;margin-top:6px"><thead><tr><th style="border:1px solid #ccc;padding:6px">Subject</th><th style="border:1px solid #ccc;padding:6px">IA</th><th style="border:1px solid #ccc;padding:6px">ESE</th><th style="border:1px solid #ccc;padding:6px">Total</th><th style="border:1px solid #ccc;padding:6px">Grade</th><th style="border:1px solid #ccc;padding:6px">Credit</th></tr></thead><tbody>`;
+      for(const s of list){
+        out += `<tr><td style="border:1px solid #ccc;padding:6px">${escapeHtml(s.name||s.subject||s.code||'')}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.ia||''))}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.ese||''))}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.total||''))}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.grade||''))}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.credit||''))}</td></tr>`;
+      }
+      out += `</tbody></table>`;
+      return out;
+    }
+
+    html += tableHtml(d.theory,'Theory Subjects');
+    html += tableHtml(d.practical,'Practical Subjects');
+
+    html += `<p style="font-weight:700;margin-top:12px">SGPA / CGPA: ${escapeHtml(String(d.cgpa || 'N/A'))}</p>`;
+    html += `</div>`;
+
+    const w = window.open('', '_blank', 'width=900,height=700');
+    w.document.open();
+    w.document.write(html);
+    w.document.close();
+    setTimeout(()=>{ w.print(); },400);
+  });
+
+  // helper
+  function escapeHtml(s){
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // allow enter key
+  document.getElementById('redg').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('go').click(); });
+</script>
 </body>
 </html>
