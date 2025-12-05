@@ -21,7 +21,7 @@
     .field{margin-bottom:12px;}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
     
-    /* UPDATED INPUT STYLES - Removed appearance:none for Select to show arrow */
+    /* INPUT STYLES */
     input[type="text"], select {
       width:100%;
       padding:12px 12px;
@@ -33,7 +33,7 @@
       box-sizing:border-box;
       outline:none;
     }
-    /* Ensure arrow is visible on dropdowns */
+    /* Ensure arrow is visible */
     select {
       -webkit-appearance: auto;
       -moz-appearance: auto;
@@ -103,8 +103,7 @@
         <div class="col field">
           <label for="year">Exam Year</label>
           <select id="year" aria-label="Exam year">
-            <!-- Fallback option in case JS fails temporarily -->
-            <option value="2025">2025</option>
+            <!-- JS will fill 2025-2030 here -->
           </select>
         </div>
       </div>
