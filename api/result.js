@@ -1,11 +1,13 @@
-// /api/result.js
-// Vercel serverless proxy + normalizer for BEU result endpoint
-// Put this file in "api/result.js" in your repo.
+// api/result.js
+// Vercel serverless proxy for BEU result endpoint
+// Returns parsed JSON when possible, otherwise returns raw HTML under data.raw
+// Caches in-memory for short time to avoid hammering BEU.
 
-const BEU_BASE = 'https://beu-bih.ac.in/backend/v1/result/get-result';
+const CACHE_TTL = 300 * 1000; // 5 minutes
+const cache = new Map();
 
 export default async function handler(req, res) {
-  // CORS
+  // Handle OPTIONS for CORS preflight
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -18,59 +20,52 @@ export default async function handler(req, res) {
 
   const redg_no = (req.query.redg_no || '').trim();
   const semester = (req.query.semester || 'III').trim();
-  const year = (req.query.year || new Date().getFullYear()).toString();
-  const month = (req.query.exam_month || '').trim(); // optional
-  const exam_held = (req.query.exam_held || (month ? `${month}/${year}` : `${month}/${year}`)).trim() || `${month}/${year}`;
+  const year = (req.query.year || '2024').trim();
+  const exam_held = (req.query.exam_held || 'July/2025').trim();
 
   if (!/^\d{4,20}$/.test(redg_no)) {
-    return res.status(400).json({ error: 'Invalid registration number (redg_no).' });
+    return res.status(400).json({ error: 'Invalid registration number (redg_no)' });
   }
 
-  const beuUrl = `${BEU_BASE}?year=${encodeURIComponent(year)}&redg_no=${encodeURIComponent(redg_no)}&semester=${encodeURIComponent(semester)}&exam_held=${encodeURIComponent(exam_held)}`;
+  const cacheKey = `${redg_no}|${semester}|${year}|${exam_held}`;
+  const now = Date.now();
+  if (cache.has(cacheKey)) {
+    const entry = cache.get(cacheKey);
+    if (now - entry.t < CACHE_TTL) {
+      return res.status(200).json({ source: 'cache', data: entry.data });
+    } else {
+      cache.delete(cacheKey);
+    }
+  }
+
+  // BEU endpoint from HAR
+  const beuBase = 'https://beu-bih.ac.in/backend/v1/result/get-result';
+  const beuUrl = `${beuBase}?year=${encodeURIComponent(year)}&redg_no=${encodeURIComponent(redg_no)}&semester=${encodeURIComponent(semester)}&exam_held=${encodeURIComponent(exam_held)}`;
 
   try {
     const r = await fetch(beuUrl, {
       method: 'GET',
       headers: {
-        'User-Agent': 'Result-Viewer/1.0',
+        'User-Agent': 'Result-Viewer/1.0 (+https://example.com)',
         'Accept': 'application/json, text/plain, */*'
+        // add Referer/Cookie here only if absolutely needed
       }
     });
 
-    const txt = await r.text();
+    const status = r.status;
+    const text = await r.text();
 
-    // Try parse JSON safely
     let parsed;
     try {
-      parsed = JSON.parse(txt);
-    } catch (err) {
-      // Not JSON — return raw content so frontend can show it (and avoid JSON.parse errors)
-      return res.status(200).json({ status: r.status, raw: txt });
+      parsed = JSON.parse(text);
+    } catch (e) {
+      parsed = { raw: text };
     }
 
-    // Normalise expected fields into a stable structure for frontend
-    const payload = parsed?.data || parsed; // some responses already had { data: {...} }
-    const normalized = {
-      registration_no: payload?.redg_no || payload?.reg_no || null,
-      name: payload?.name || null,
-      father_name: payload?.father_name || null,
-      mother_name: payload?.mother_name || null,
-      college_name: payload?.college_name || payload?.college || null,
-      college_code: payload?.college_code || null,
-      course: payload?.course || payload?.course_name || null,
-      semester: payload?.semester || semester || null,
-      exam_held: payload?.exam_held || exam_held || null,
-      exam_year: payload?.examYear || payload?.exam_year || year || null,
-      theorySubjects: Array.isArray(payload?.theorySubjects) ? payload.theorySubjects : (payload?.theory || payload?.theory_subjects || []),
-      practicalSubjects: Array.isArray(payload?.practicalSubjects) ? payload.practicalSubjects : (payload?.practical || payload?.practical_subjects || []),
-      sgpa: payload?.sgpa || payload?.SGPA || payload?.cgpa || payload?.CGPA || null,
-      raw: payload
-    };
+    cache.set(cacheKey, { t: now, data: parsed });
 
-    return res.status(200).json({ status: r.status, parsed: normalized });
-
+    return res.status(200).json({ source: 'beu', status, data: parsed });
   } catch (err) {
-    console.error('proxy error', err);
-    return res.status(500).json({ error: 'Server error: ' + (err.message || String(err)) });
+    return res.status(500).json({ error: err.message || String(err) });
   }
 }
