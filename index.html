@@ -1,206 +1,231 @@
 <!doctype html>
 <html>
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BEU Result Viewer</title>
-<style>
-  :root{--bg:#000;--card:#0d0d0d;--muted:#b5b5b5;--accent:#00c8ff;--btn1:#00c8ff;--btn2:#16c79a}
-  html,body{height:100%;margin:0;background:var(--bg);color:#fff;font-family:Inter,Arial,Helvetica,sans-serif}
-  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
-  .card{width:100%;max-width:420px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.01));padding:24px;border-radius:16px;border:1px solid rgba(255,255,255,0.02);box-shadow:0 12px 30px rgba(0,200,255,0.06) inset}
-  h2{text-align:center;color:var(--accent);margin:0 0 14px;font-weight:700}
-  label{display:block;color:var(--muted);font-size:13px;margin:8px 0 6px}
-  input,select{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);background:#070707;color:#fff;font-size:15px;box-sizing:border-box}
-  .row{display:flex;gap:10px}
-  .col{flex:1}
-  button.primary{width:100%;padding:14px;border-radius:12px;border:none;background:var(--btn1);color:#000;font-weight:700;font-size:16px;margin-top:14px;cursor:pointer}
-  .out{margin-top:16px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.02);color:#e6f7ff}
-  table{width:100%;border-collapse:collapse;margin-top:8px;color:#fff}
-  th,td{border:1px solid rgba(255,255,255,0.03);padding:8px;text-align:left;font-size:14px}
-  th{background:rgba(255,255,255,0.02);font-weight:700;color:var(--muted)}
-  .actions{display:flex;gap:12px;margin-top:12px}
-  .btn{flex:1;padding:12px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
-  .btn.json{background:var(--btn1);color:#000}
-  .btn.pdf{background:var(--btn2);color:#002a1f}
-  .footer{margin-top:12px;text-align:center;color:rgba(255,255,255,0.6);font-size:13px}
-  @media (max-width:420px){.card{padding:18px}}
-</style>
+  <meta charset="utf-8" />
+  <title>BEU Result Viewer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root{
+      --bg:#000000; --card:#0d0d0d; --muted:#b5b5b5; --accent:#00c8ff; --input-bg:#0a0a0a; --card-border:#111;
+    }
+    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:#fff}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
+    .card{background:var(--card);padding:22px;border-radius:16px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,200,255,0.06), inset 0 1px 0 rgba(255,255,255,0.02);border:1px solid var(--card-border);box-sizing:border-box}
+    h2{text-align:center;margin:0 0 14px;color:var(--accent);font-weight:600;font-size:20px}
+    .field{margin-bottom:12px}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+    input[type="text"],select{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--input-bg);color:#fff;font-size:15px;box-sizing:border-box;outline:none}
+    .row{display:flex;gap:10px}
+    .col{flex:1}
+    button.primary{width:100%;padding:12px;border-radius:12px;border:none;background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px}
+    #outBox{margin-top:14px;white-space:pre-wrap;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid var(--card-border);max-height:420px;overflow:auto;color:#e6f7ff;font-size:14px}
+    #msg{text-align:center;margin-top:10px;color:var(--accent);font-size:13px}
+    .table{width:100%;border-collapse:collapse;margin-top:8px;background:transparent}
+    .table td,.table th{border:1px solid rgba(255,255,255,0.06);padding:10px;font-size:14px}
+    .table th{background:rgba(255,255,255,0.02);text-align:left;color:var(--muted);width:50%}
+    .sgpaBox{margin-top:12px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.03)}
+    .actions{display:flex;gap:12px;margin-top:12px}
+    .btn-secondary{flex:1;padding:12px;border-radius:10px;border:none;background:#05b8a7;color:#001;font-weight:700;cursor:pointer}
+    .madeby{margin-top:12px;text-align:center;color:#9aa; font-size:13px}
+    @media (max-width:420px){.card{padding:18px;border-radius:12px}}
+  </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="card" role="main" aria-label="BEU Result Viewer">
-    <h2>BEU Result Checker</h2>
+  <div class="wrap">
+    <div class="card" role="main" aria-label="BEU Result Viewer">
+      <h2>BEU Result Checker</h2>
 
-    <label for="redg">Reg. No</label>
-    <input id="redg" type="text" inputmode="numeric" placeholder="e.g. 23155150039" />
+      <div class="field">
+        <label for="redg">Reg. No</label>
+        <input id="redg" type="text" inputmode="numeric" pattern="\d*" placeholder="e.g. 23155150039" autocomplete="off" />
+      </div>
 
-    <label for="sem">Semester</label>
-    <select id="sem">
-      <option>I</option><option>II</option><option selected>III</option><option>IV</option><option>V</option><option>VI</option><option>VII</option><option>VIII</option>
-    </select>
-
-    <div class="row" style="margin-top:8px">
-      <div class="col">
-        <label for="month">Exam Month</label>
-        <select id="month">
-          <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option selected>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
+      <div class="field">
+        <label for="sem">Semester</label>
+        <select id="sem" aria-label="Semester">
+          <option value="I">I</option>
+          <option value="II">II</option>
+          <option value="III" selected>III</option>
+          <option value="IV">IV</option>
+          <option value="V">V</option>
+          <option value="VI">VI</option>
+          <option value="VII">VII</option>
+          <option value="VIII">VIII</option>
         </select>
       </div>
-      <div class="col">
-        <label for="year">Exam Year</label>
-        <select id="year"></select>
+
+      <div class="row" style="margin-top:6px">
+        <div class="col field">
+          <label for="month">Exam Month</label>
+          <select id="month" aria-label="Exam month">
+            <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option selected>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
+          </select>
+        </div>
+
+        <div class="col field">
+          <label for="year">Exam Year</label>
+          <select id="year" aria-label="Exam year"></select>
+        </div>
       </div>
-    </div>
 
-    <button id="go" class="primary">Get Result</button>
+      <button id="go" class="primary">Get Result</button>
 
-    <div id="msg" class="out" style="display:none"></div>
+      <div id="msg" role="status" aria-live="polite"></div>
 
-    <div id="resultArea" class="out" style="display:none">
-      <!-- summary table -->
-      <table id="infoTable" aria-live="polite">
-        <tr><th>Registration No:</th><td id="infoReg"></td><th>Semester:</th><td id="infoSem"></td></tr>
-        <tr><th>Name:</th><td id="infoName"></td><th>Exam:</th><td id="infoExam"></td></tr>
-        <tr><th>College:</th><td id="infoCollege"></td><th>Course:</th><td id="infoCourse"></td></tr>
-      </table>
-
-      <div id="marksSection"></div>
-
-      <p id="sgpa" style="margin-top:8px;font-weight:700">SGPA / CGPA: <span id="sgpaVal">N/A</span></p>
-
-      <div class="actions">
-        <button class="btn json" id="downloadJson">Download JSON</button>
-        <button class="btn pdf" id="downloadPdf">Download PDF</button>
+      <!-- Result preview area (structured like the PDF you provided) -->
+      <div id="outBox" aria-live="polite">
+        <!-- will be filled by JS -->
       </div>
-    </div>
 
-    <div class="footer">Made with ♥ by Aryan</div>
+      <div class="actions" id="actionBtns" style="display:none">
+        <button id="downloadPdf" class="btn-secondary">Download PDF</button>
+      </div>
+
+      <div class="madeby">Made with ♥ by Aryan</div>
+    </div>
   </div>
-</div>
 
 <script>
-  // populate years 2020-2030
-  (function fillYears(){
-    const sel = document.getElementById('year');
-    for(let y=2020;y<=2030;y++){
-      const opt = document.createElement('option');
-      opt.value = String(y);
-      opt.textContent = String(y);
-      if(y === new Date().getFullYear()) opt.selected = true;
-      sel.appendChild(opt);
+  // populate year select dynamically (2020 - 2030)
+  (function populateYears(){
+    const start=2020,end=2030;
+    const sel=document.getElementById('year');
+    const cur=new Date().getFullYear();
+    sel.innerHTML='';
+    for(let y=start;y<=end;y++){
+      const o=document.createElement('option'); o.value=String(y); o.textContent=String(y);
+      if(y===Math.min(Math.max(cur,start),end)) o.selected=true;
+      sel.appendChild(o);
     }
   })();
 
-  const apiBase = '/api/result'; // Vercel route
+  const apiBase = '/api/result'; // Vercel route (keep api/result.js in repo)
 
-  function showMsg(txt, isError){
-    const m = document.getElementById('msg');
-    m.style.display = 'block';
-    m.textContent = txt;
-    m.style.color = isError ? '#ffb3b3' : '#bff';
-    setTimeout(()=>{ m.style.display = 'none'; }, 6000);
+  // helper: escape HTML
+  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // Build pretty result display (table + subjects + sgpa/cgpa)
+  function renderResult(data){
+    // header info
+    const reg = data.redg_no || data.reg_no || data.registration_no || '';
+    const sem = data.semester || document.getElementById('sem').value;
+    const exam = data.exam_held || (document.getElementById('month').value + '/' + document.getElementById('year').value);
+    const name = data.name || (data.student && data.student.name) || '';
+    const college = data.college_name || data.college || (data.college_name_long) || '';
+    const course = data.course || data.course_name || '';
+
+    // start html
+    let html = '<table class="table">';
+    html += `<tr><th>Registration No:</th><td>${esc(reg)}</td></tr>`;
+    html += `<tr><th>Semester:</th><td>${esc(sem)}</td></tr>`;
+    html += `<tr><th>Name:</th><td>${esc(name)}</td></tr>`;
+    html += `<tr><th>Exam:</th><td>${esc(exam)}</td></tr>`;
+    html += `<tr><th>College:</th><td>${esc(college)}</td></tr>`;
+    html += `<tr><th>Course:</th><td>${esc(course)}</td></tr>`;
+    html += `</table>`;
+
+    // subjects: combine theory + practical if present
+    let subjects = [];
+    if (Array.isArray(data.theorySubjects)) subjects = subjects.concat(data.theorySubjects);
+    if (Array.isArray(data.practicalSubjects)) subjects = subjects.concat(data.practicalSubjects);
+    if (Array.isArray(data.subjects)) subjects = subjects.concat(data.subjects);
+    if (Array.isArray(data.results)) subjects = subjects.concat(data.results);
+    // Try to normalize each subject (name & total/grade)
+    if (subjects.length){
+      html += '<h3 style="margin-top:12px;color:var(--muted);font-size:15px">Subjects</h3>';
+      html += '<table class="table"><thead><tr><th>Subject</th><th style="width:28%;text-align:right">Marks / Grade</th></tr></thead><tbody>';
+      subjects.forEach(s=>{
+        const sname = s.name || s.subject || s.paper || JSON.stringify(s).slice(0,40);
+        const marks = (s.total ? s.total : (s.marks || s.mark)) || (s.grade ? s.grade : '');
+        html += `<tr><td>${esc(sname)}</td><td style="text-align:right">${esc(String(marks))}</td></tr>`;
+      });
+      html += '</tbody></table>';
+    } else {
+      // fallback if BEU returned raw or different shape
+      if (data.raw) {
+        html += '<pre style="white-space:pre-wrap;color:#cfefff;margin-top:10px;">' + esc(String(data.raw).slice(0,8000)) + (String(data.raw).length>8000?'\n\n...truncated':'') + '</pre>';
+      } else {
+        html += '<pre style="white-space:pre-wrap;color:#cfefff;margin-top:10px;">' + esc(JSON.stringify(data, null, 2)) + '</pre>';
+      }
+    }
+
+    // SGPA / CGPA display — try to display same as your PDF: label on left, value bold on right
+    let sgpaVal = null;
+    if (data.sgpa) {
+      // sgpa could be array or single value
+      if (Array.isArray(data.sgpa)) sgpaVal = data.sgpa.join(', ');
+      else sgpaVal = data.sgpa;
+    } else if (data.cgpa) {
+      sgpaVal = data.cgpa;
+    } else if (data.sgp) {
+      sgpaVal = data.sgp;
+    }
+
+    html += '<div class="sgpaBox">';
+    html += '<strong>SGPA / CGPA:</strong> ';
+    html += `<span style="font-weight:800;margin-left:8px">${esc(sgpaVal !== null ? String(sgpaVal) : 'N/A')}</span>`;
+    html += '</div>';
+
+    return html;
   }
 
+  // click handler
   document.getElementById('go').addEventListener('click', async ()=>{
     const redg = document.getElementById('redg').value.trim();
-    const sem  = document.getElementById('sem').value.trim();
+    const sem = document.getElementById('sem').value.trim();
     const month = document.getElementById('month').value.trim();
     const year = document.getElementById('year').value.trim();
-    if(!redg){ alert('Please enter registration number'); return; }
+    if (!redg) { alert('Enter your registration number'); return; }
 
     const exam_held = `${month}/${year}`;
     const url = `${apiBase}?redg_no=${encodeURIComponent(redg)}&semester=${encodeURIComponent(sem)}&year=${encodeURIComponent(year)}&exam_held=${encodeURIComponent(exam_held)}`;
 
-    showMsg('Loading...', false);
-    document.getElementById('resultArea').style.display = 'none';
+    document.getElementById('msg').textContent = 'Loading...';
+    document.getElementById('outBox').innerHTML = '';
+    document.getElementById('actionBtns').style.display = 'none';
 
-    try{
-      const r = await fetch(url);
-      const j = await r.json();
-
-      if(j.error){ showMsg('Error: '+j.error, true); return; }
-      // if BEU returned raw HTML (not JSON) it will be in j.raw
-      if(j.raw){ showMsg('Server returned non-JSON result; showing raw.', true); document.getElementById('resultArea').style.display='block'; document.getElementById('marksSection').innerText = j.raw; return; }
-
-      const data = j.parsed || j.data || j;
-      if(!data){ showMsg('No data returned', true); return; }
-
-      // populate info header
-      document.getElementById('infoReg').textContent = data.registration_no || 'N/A';
-      document.getElementById('infoSem').textContent = data.semester || 'N/A';
-      document.getElementById('infoName').textContent = data.name || 'N/A';
-      document.getElementById('infoExam').textContent = data.exam_held || (month+'/'+year);
-      document.getElementById('infoCollege').textContent = data.college_name || 'N/A';
-      document.getElementById('infoCourse').textContent = data.course || 'N/A';
-      document.getElementById('sgpaVal').textContent = Array.isArray(data.sgpa) ? data.sgpa.join(', ') : (data.sgpa || 'N/A');
-
-      // build marks tables
-      const marksSection = document.getElementById('marksSection');
-      marksSection.innerHTML = ''; // reset
-
-      function makeTable(title, arr){
-        if(!Array.isArray(arr) || arr.length===0) return;
-        const h = document.createElement('h3'); h.textContent = title; h.style.marginTop = '10px';
-        const tbl = document.createElement('table');
-        const thead = document.createElement('thead');
-        thead.innerHTML = '<tr><th>Subject</th><th>IA</th><th>ESE</th><th>Total</th><th>Grade</th><th>Credit</th></tr>';
-        tbl.appendChild(thead);
-        const tb = document.createElement('tbody');
-        arr.forEach(s=>{
-          const tr = document.createElement('tr');
-          const name = s.name || s.subject || s.paper || '';
-          const ia = s.ia ?? s.internal ?? s.ia_marks ?? '';
-          const ese = s.ese ?? s.ese_marks ?? s.external ?? '';
-          const total = s.total ?? '';
-          const grade = s.grade ?? '';
-          const credit = s.credit ?? '';
-          tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td>${escapeHtml(String(ia))}</td><td>${escapeHtml(String(ese))}</td><td>${escapeHtml(String(total))}</td><td>${escapeHtml(String(grade))}</td><td>${escapeHtml(String(credit))}</td>`;
-          tb.appendChild(tr);
-        });
-        tbl.appendChild(tb);
-        marksSection.appendChild(h);
-        marksSection.appendChild(tbl);
+    try {
+      const res = await fetch(url);
+      // if backend returns raw HTML page (not JSON), we need to handle,
+      // but our server tries to return JSON always. So parse accordingly.
+      const j = await res.json();
+      document.getElementById('msg').textContent = '';
+      if (j.error) {
+        document.getElementById('outBox').textContent = 'Error: ' + (j.error || JSON.stringify(j));
+        return;
       }
-
-      makeTable('Theory Subjects', data.theorySubjects || []);
-      makeTable('Practical Subjects', data.practicalSubjects || []);
-
-      // show results area
-      document.getElementById('resultArea').style.display = 'block';
-      showMsg('Result loaded', false);
-
-      // attach latest for download
-      window.latestResult = data;
-
-    }catch(err){
-      showMsg('Fetch error: ' + (err.message||err), true);
-      console.error(err);
+      const data = j.data || {};
+      // Render the structured view (like PDF)
+      const html = renderResult(data);
+      document.getElementById('outBox').innerHTML = html;
+      document.getElementById('actionBtns').style.display = 'flex';
+      // store latest for PDF print
+      window.latestPrintable = { headerHtml: html, reg: redg, sem, exam: exam_held };
+    } catch (err) {
+      document.getElementById('msg').textContent = '';
+      document.getElementById('outBox').textContent = 'Fetch error: ' + (err.message || err);
     }
   });
 
-  // Download JSON
-  document.getElementById('downloadJson').addEventListener('click', ()=>{
-    const data = window.latestResult || {};
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-    a.download = `beu_result_${data.registration_no || 'result'}.json`;
-    document.body.appendChild(a); a.click(); a.remove();
+  // Enter key
+  document.getElementById('redg').addEventListener('keydown', function(e){
+    if (e.key === 'Enter') document.getElementById('go').click();
   });
 
-  // Download PDF - simple print-based method
-  document.getElementById('downloadPdf').addEventListener('click', ()=>{
-    const header = `<h2 style="color:#000">BEU Result</h2><p>Reg No: ${escapeHtml((window.latestResult||{}).registration_no||'')}</p>`;
-    const content = document.getElementById('resultArea').innerHTML;
-    const styles = `<style>body{font-family:Arial;padding:18px} table{border-collapse:collapse;width:100%} th,td{border:1px solid #ccc;padding:6px;text-align:left}</style>`;
-    const w = window.open('', '_blank', 'width=900,height=700');
+  // Download PDF (print)
+  document.getElementById('downloadPdf').addEventListener('click', function(){
+    const lp = window.latestPrintable || {};
+    const header = `<h2 style="color:#00c8ff;text-align:center">BEU Result</h2>
+      <p style="text-align:center;font-size:14px;margin-bottom:8px">Reg: ${esc(lp.reg||'') } &nbsp;|&nbsp; Semester: ${esc(lp.sem||'')} &nbsp;|&nbsp; Exam: ${esc(lp.exam||'')}</p><hr/>`;
+    const styles = `<style>body{font-family:Arial;padding:18px;color:#111} table{width:100%;border-collapse:collapse} table td,table th{border:1px solid #ccc;padding:8px} h2{margin:0 0 8px 0}</style>`;
+    const content = lp.headerHtml || document.getElementById('outBox').innerHTML;
+    const w = window.open('','_blank','width=900,height=700');
     w.document.open();
-    w.document.write(`<html><head><title>Print</title>${styles}</head><body>${header}${content}</body></html>`);
+    w.document.write(`<html><head><title>Result</title>${styles}</head><body>${header}${content}</body></html>`);
     w.document.close();
     setTimeout(()=>{ w.print(); }, 500);
   });
 
-  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 </script>
 </body>
 </html>
