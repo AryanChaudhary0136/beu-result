@@ -1,34 +1,37 @@
 // script.js - Frontend Logic
 
-// Wait for HTML to load before populating Year
-document.addEventListener('DOMContentLoaded', function() {
+// Run immediately to populate year
+(function initYear() {
   const sel = document.getElementById('year');
   if (sel) {
-    sel.innerHTML = ''; // Clear previous if any
+    sel.innerHTML = ''; // Clear fallback
+    const currentYear = new Date().getFullYear();
+    // Populate 2020 to 2030
     for (let y = 2020; y <= 2030; y++) {
       const o = document.createElement('option');
-      o.value = o.textContent = y;
-      // Screenshot mein 2025 tha, isliye 2025 select kar rahe hain
+      o.value = y;
+      o.textContent = y;
+      // Default selection logic (Matches your PDF screenshot year 2025, or current year)
       if (y === 2025) o.selected = true; 
       sel.appendChild(o);
     }
   }
+})();
+
+const apiBase = '/api/result'; 
+
+// Event Listeners
+const goBtn = document.getElementById('go');
+if(goBtn) goBtn.addEventListener('click', fetchResult);
+
+const redgInput = document.getElementById('redg');
+if(redgInput) redgInput.addEventListener('keydown', (e) => { 
+    if (e.key === 'Enter') document.getElementById('go').click(); 
 });
 
-const apiBase = '/api/result'; // Vercel route
+const pdfBtn = document.getElementById('downloadPdf');
+if(pdfBtn) pdfBtn.addEventListener('click', downloadPdfAction);
 
-// Setup Event Listeners
-document.addEventListener('DOMContentLoaded', function() {
-  const goBtn = document.getElementById('go');
-  const regInput = document.getElementById('redg');
-  const pdfBtn = document.getElementById('downloadPdf');
-
-  if(goBtn) goBtn.addEventListener('click', fetchResult);
-  if(regInput) regInput.addEventListener('keydown', (e) => { 
-    if (e.key === 'Enter') goBtn.click(); 
-  });
-  if(pdfBtn) pdfBtn.addEventListener('click', downloadPdfAction);
-});
 
 async function fetchResult(){
   const redg = document.getElementById('redg').value.trim();
@@ -125,6 +128,7 @@ function renderResult(data, semInput, yearInput){
   let theory = data.theorySubjects || [];
   let practical = data.practicalSubjects || [];
   
+  // Fallback if API doesn't separate them
   if(theory.length === 0 && practical.length === 0 && data.subjects){
       data.subjects.forEach(s => {
            const code = (s.code || '').toUpperCase();
@@ -168,7 +172,6 @@ function renderResult(data, semInput, yearInput){
   outBox.hidden = false;
 }
 
-// Separate function for PDF download
 function downloadPdfAction() {
   const printContent = document.getElementById('printArea').innerHTML;
   const styles = `
