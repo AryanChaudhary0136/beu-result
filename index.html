@@ -1,33 +1,41 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   <title>BEU Result Viewer</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     :root{
-      --bg:#000000; --card:#0d0d0d; --muted:#b5b5b5; --accent:#00c8ff; --input-bg:#0a0a0a; --card-border:#111;
+      --bg:#000;
+      --card:#0d0d0d;
+      --muted:#b5b5b5;
+      --accent:#00c8ff;
+      --input-bg:#0a0a0a;
+      --card-border:#111;
+      --green:#2fd4a6;
     }
     html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:#fff}
-    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
-    .card{background:var(--card);padding:22px;border-radius:16px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,200,255,0.06), inset 0 1px 0 rgba(255,255,255,0.02);border:1px solid var(--card-border);box-sizing:border-box}
-    h2{text-align:center;margin:0 0 14px;color:var(--accent);font-weight:600;font-size:20px}
-    .field{margin-bottom:12px}
-    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input[type="text"],select{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--input-bg);color:#fff;font-size:15px;box-sizing:border-box;outline:none}
-    .row{display:flex;gap:10px}
-    .col{flex:1}
-    button.primary{width:100%;padding:12px;border-radius:12px;border:none;background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px}
-    #outBox{margin-top:14px;white-space:pre-wrap;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid var(--card-border);max-height:420px;overflow:auto;color:#e6f7ff;font-size:14px}
-    #msg{text-align:center;margin-top:10px;color:var(--accent);font-size:13px}
-    .table{width:100%;border-collapse:collapse;margin-top:8px;background:transparent}
-    .table td,.table th{border:1px solid rgba(255,255,255,0.06);padding:10px;font-size:14px}
-    .table th{background:rgba(255,255,255,0.02);text-align:left;color:var(--muted);width:50%}
-    .sgpaBox{margin-top:12px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.03)}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;}
+    .card{background:var(--card);padding:26px;border-radius:16px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,200,255,0.08);border:1px solid var(--card-border);box-sizing:border-box;}
+    h2{text-align:center;margin:0 0 18px 0;color:var(--accent);font-weight:600;letter-spacing:0.2px;font-size:20px;}
+    .field{margin-bottom:12px;}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
+    input[type="text"], select{width:100%;padding:12px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--input-bg);color:#fff;font-size:15px;box-sizing:border-box;outline:none;-webkit-appearance:none;}
+    .row{display:flex;gap:10px;}
+    .col{flex:1;}
+    button{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;}
+    #outBox{margin-top:14px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid var(--card-border);max-height:480px;overflow:auto;color:#e6f7ff;font-size:14px;}
+    #msg{ text-align:center;margin-top:10px;color:var(--accent);font-size:13px }
+    .table{width:100%;border-collapse:collapse;margin-top:10px}
+    .table td,.table th{border:1px solid rgba(255,255,255,0.06);padding:10px}
+    .label-col{width:45%;color:var(--muted);background:rgba(255,255,255,0.01)}
+    .value-col{width:55%}
+    .sgpa{margin-top:10px;font-weight:700;color:#fff}
     .actions{display:flex;gap:12px;margin-top:12px}
-    .btn-secondary{flex:1;padding:12px;border-radius:10px;border:none;background:#05b8a7;color:#001;font-weight:700;cursor:pointer}
-    .madeby{margin-top:12px;text-align:center;color:#9aa; font-size:13px}
-    @media (max-width:420px){.card{padding:18px;border-radius:12px}}
+    .btn-ghost{flex:1;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;cursor:pointer}
+    .btn-pdf{flex:1;padding:12px;border-radius:10px;border:none;background:var(--green);color:#002; font-weight:700;cursor:pointer}
+    .muted-center{text-align:center;color:#9aa0a6;margin-top:12px;font-size:13px}
+    @media (max-width:420px){.card{padding:18px;border-radius:12px;max-width:360px;}h2{font-size:18px}input[type="text"],select{padding:11px;font-size:15px}}
   </style>
 </head>
 <body>
@@ -43,14 +51,9 @@
       <div class="field">
         <label for="sem">Semester</label>
         <select id="sem" aria-label="Semester">
-          <option value="I">I</option>
-          <option value="II">II</option>
-          <option value="III" selected>III</option>
-          <option value="IV">IV</option>
-          <option value="V">V</option>
-          <option value="VI">VI</option>
-          <option value="VII">VII</option>
-          <option value="VIII">VIII</option>
+          <option value="I">I</option><option value="II">II</option><option value="III" selected>III</option>
+          <option value="IV">IV</option><option value="V">V</option><option value="VI">VI</option>
+          <option value="VII">VII</option><option value="VIII">VIII</option>
         </select>
       </div>
 
@@ -58,174 +61,205 @@
         <div class="col field">
           <label for="month">Exam Month</label>
           <select id="month" aria-label="Exam month">
-            <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option selected>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
+            <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option>
+            <option selected>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
           </select>
         </div>
-
         <div class="col field">
           <label for="year">Exam Year</label>
           <select id="year" aria-label="Exam year"></select>
         </div>
       </div>
 
-      <button id="go" class="primary">Get Result</button>
+      <button id="go">Get Result</button>
 
       <div id="msg" role="status" aria-live="polite"></div>
 
-      <!-- Result preview area (structured like the PDF you provided) -->
-      <div id="outBox" aria-live="polite">
-        <!-- will be filled by JS -->
+      <!-- Result area (clean table like PDF) -->
+      <div id="outBox" aria-live="polite" hidden>
+        <table class="table" id="infoTable" role="table" aria-label="Student info">
+          <!-- Filled by JS -->
+        </table>
+
+        <div id="marksArea" style="margin-top:12px"></div>
+
+        <div class="sgpa" id="sgpaLine"></div>
+
+        <div class="actions" id="actionsRow" style="display:none">
+          <button class="btn-ghost" id="downloadJson" style="display:none">Download JSON</button>
+          <button class="btn-pdf" id="downloadPdf">Download PDF</button>
+        </div>
       </div>
 
-      <div class="actions" id="actionBtns" style="display:none">
-        <button id="downloadPdf" class="btn-secondary">Download PDF</button>
-      </div>
-
-      <div class="madeby">Made with ♥ by Aryan</div>
+      <div class="muted-center">Made with ♥ by Aryan</div>
     </div>
   </div>
 
 <script>
-  // populate year select dynamically (2020 - 2030)
-  (function populateYears(){
-    const start=2020,end=2030;
-    const sel=document.getElementById('year');
-    const cur=new Date().getFullYear();
-    sel.innerHTML='';
-    for(let y=start;y<=end;y++){
-      const o=document.createElement('option'); o.value=String(y); o.textContent=String(y);
-      if(y===Math.min(Math.max(cur,start),end)) o.selected=true;
-      sel.appendChild(o);
-    }
-  })();
+  // populate years 2020-2030
+  (function(){ const sel = document.getElementById('year'); for(let y=2020;y<=2030;y++){ const o=document.createElement('option'); o.value=o.textContent=y; if(y===2025) o.selected=true; sel.appendChild(o);} })();
 
-  const apiBase = '/api/result'; // Vercel route (keep api/result.js in repo)
+  const apiBase = '/api/result'; // Vercel route (api/result.js)
 
-  // helper: escape HTML
-  function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  document.getElementById('go').addEventListener('click', fetchResult);
+  document.getElementById('redg').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('go').click(); });
 
-  // Build pretty result display (table + subjects + sgpa/cgpa)
-  function renderResult(data){
-    // header info
-    const reg = data.redg_no || data.reg_no || data.registration_no || '';
-    const sem = data.semester || document.getElementById('sem').value;
-    const exam = data.exam_held || (document.getElementById('month').value + '/' + document.getElementById('year').value);
-    const name = data.name || (data.student && data.student.name) || '';
-    const college = data.college_name || data.college || (data.college_name_long) || '';
-    const course = data.course || data.course_name || '';
-
-    // start html
-    let html = '<table class="table">';
-    html += `<tr><th>Registration No:</th><td>${esc(reg)}</td></tr>`;
-    html += `<tr><th>Semester:</th><td>${esc(sem)}</td></tr>`;
-    html += `<tr><th>Name:</th><td>${esc(name)}</td></tr>`;
-    html += `<tr><th>Exam:</th><td>${esc(exam)}</td></tr>`;
-    html += `<tr><th>College:</th><td>${esc(college)}</td></tr>`;
-    html += `<tr><th>Course:</th><td>${esc(course)}</td></tr>`;
-    html += `</table>`;
-
-    // subjects: combine theory + practical if present
-    let subjects = [];
-    if (Array.isArray(data.theorySubjects)) subjects = subjects.concat(data.theorySubjects);
-    if (Array.isArray(data.practicalSubjects)) subjects = subjects.concat(data.practicalSubjects);
-    if (Array.isArray(data.subjects)) subjects = subjects.concat(data.subjects);
-    if (Array.isArray(data.results)) subjects = subjects.concat(data.results);
-    // Try to normalize each subject (name & total/grade)
-    if (subjects.length){
-      html += '<h3 style="margin-top:12px;color:var(--muted);font-size:15px">Subjects</h3>';
-      html += '<table class="table"><thead><tr><th>Subject</th><th style="width:28%;text-align:right">Marks / Grade</th></tr></thead><tbody>';
-      subjects.forEach(s=>{
-        const sname = s.name || s.subject || s.paper || JSON.stringify(s).slice(0,40);
-        const marks = (s.total ? s.total : (s.marks || s.mark)) || (s.grade ? s.grade : '');
-        html += `<tr><td>${esc(sname)}</td><td style="text-align:right">${esc(String(marks))}</td></tr>`;
-      });
-      html += '</tbody></table>';
-    } else {
-      // fallback if BEU returned raw or different shape
-      if (data.raw) {
-        html += '<pre style="white-space:pre-wrap;color:#cfefff;margin-top:10px;">' + esc(String(data.raw).slice(0,8000)) + (String(data.raw).length>8000?'\n\n...truncated':'') + '</pre>';
-      } else {
-        html += '<pre style="white-space:pre-wrap;color:#cfefff;margin-top:10px;">' + esc(JSON.stringify(data, null, 2)) + '</pre>';
-      }
-    }
-
-    // SGPA / CGPA display — try to display same as your PDF: label on left, value bold on right
-    let sgpaVal = null;
-    if (data.sgpa) {
-      // sgpa could be array or single value
-      if (Array.isArray(data.sgpa)) sgpaVal = data.sgpa.join(', ');
-      else sgpaVal = data.sgpa;
-    } else if (data.cgpa) {
-      sgpaVal = data.cgpa;
-    } else if (data.sgp) {
-      sgpaVal = data.sgp;
-    }
-
-    html += '<div class="sgpaBox">';
-    html += '<strong>SGPA / CGPA:</strong> ';
-    html += `<span style="font-weight:800;margin-left:8px">${esc(sgpaVal !== null ? String(sgpaVal) : 'N/A')}</span>`;
-    html += '</div>';
-
-    return html;
-  }
-
-  // click handler
-  document.getElementById('go').addEventListener('click', async ()=>{
+  async function fetchResult(){
     const redg = document.getElementById('redg').value.trim();
     const sem = document.getElementById('sem').value.trim();
     const month = document.getElementById('month').value.trim();
     const year = document.getElementById('year').value.trim();
-    if (!redg) { alert('Enter your registration number'); return; }
+    if(!redg){ alert('Enter your registration number'); return; }
 
     const exam_held = `${month}/${year}`;
     const url = `${apiBase}?redg_no=${encodeURIComponent(redg)}&semester=${encodeURIComponent(sem)}&year=${encodeURIComponent(year)}&exam_held=${encodeURIComponent(exam_held)}`;
 
     document.getElementById('msg').textContent = 'Loading...';
-    document.getElementById('outBox').innerHTML = '';
-    document.getElementById('actionBtns').style.display = 'none';
+    document.getElementById('outBox').hidden = true;
+    document.getElementById('marksArea').innerHTML = '';
+    document.getElementById('sgpaLine').textContent = '';
+    document.getElementById('actionsRow').style.display = 'none';
 
     try {
-      const res = await fetch(url);
-      // if backend returns raw HTML page (not JSON), we need to handle,
-      // but our server tries to return JSON always. So parse accordingly.
-      const j = await res.json();
+      const r = await fetch(url);
+      // check content-type before parsing JSON
+      const ct = r.headers.get('content-type') || '';
+      let dataWrap;
+      if (ct.includes('application/json')) {
+        dataWrap = await r.json();
+      } else {
+        // try parse text defensively (server might return JSON text)
+        const txt = await r.text();
+        try { dataWrap = JSON.parse(txt); } catch { dataWrap = { data: { raw: txt } }; }
+      }
+
       document.getElementById('msg').textContent = '';
-      if (j.error) {
-        document.getElementById('outBox').textContent = 'Error: ' + (j.error || JSON.stringify(j));
+
+      if (dataWrap.error) {
+        document.getElementById('outBox').hidden = false;
+        document.getElementById('outBox').textContent = 'Error: ' + dataWrap.error;
         return;
       }
-      const data = j.data || {};
-      // Render the structured view (like PDF)
-      const html = renderResult(data);
-      document.getElementById('outBox').innerHTML = html;
-      document.getElementById('actionBtns').style.display = 'flex';
-      // store latest for PDF print
-      window.latestPrintable = { headerHtml: html, reg: redg, sem, exam: exam_held };
+
+      const data = (dataWrap.data && typeof dataWrap.data === 'object') ? dataWrap.data : dataWrap;
+
+      // If backend returned raw HTML/text
+      if (data && data.raw && typeof data.raw === 'string') {
+        document.getElementById('outBox').hidden = false;
+        document.getElementById('outBox').textContent = data.raw.slice(0, 20000);
+        return;
+      }
+
+      renderResult(data);
     } catch (err) {
       document.getElementById('msg').textContent = '';
+      document.getElementById('outBox').hidden = false;
       document.getElementById('outBox').textContent = 'Fetch error: ' + (err.message || err);
     }
-  });
+  }
 
-  // Enter key
-  document.getElementById('redg').addEventListener('keydown', function(e){
-    if (e.key === 'Enter') document.getElementById('go').click();
-  });
+  function renderResult(data){
+    // Clear
+    const infoTable = document.getElementById('infoTable');
+    infoTable.innerHTML = '';
 
-  // Download PDF (print)
-  document.getElementById('downloadPdf').addEventListener('click', function(){
-    const lp = window.latestPrintable || {};
-    const header = `<h2 style="color:#00c8ff;text-align:center">BEU Result</h2>
-      <p style="text-align:center;font-size:14px;margin-bottom:8px">Reg: ${esc(lp.reg||'') } &nbsp;|&nbsp; Semester: ${esc(lp.sem||'')} &nbsp;|&nbsp; Exam: ${esc(lp.exam||'')}</p><hr/>`;
-    const styles = `<style>body{font-family:Arial;padding:18px;color:#111} table{width:100%;border-collapse:collapse} table td,table th{border:1px solid #ccc;padding:8px} h2{margin:0 0 8px 0}</style>`;
-    const content = lp.headerHtml || document.getElementById('outBox').innerHTML;
-    const w = window.open('','_blank','width=900,height=700');
+    // Use safe getters (fields seen in BEU sample)
+    const reg = data.redg_no || data.reg_no || data.registration_no || '';
+    const sem = data.semester || document.getElementById('sem').value;
+    const exam = data.exam_held || `${document.getElementById('month').value}/${document.getElementById('year').value}`;
+    const name = data.name || data.student_name || '';
+    const college = data.college_name || data.college || data.collegeName || '';
+    const course = data.course || data.course_name || data.courseName || '';
+
+    // Build info rows
+    appendRow(infoTable, 'Registration No:', reg, 'Semester:', sem);
+    appendRow(infoTable, 'Name:', name, 'Exam:', exam);
+    appendRow(infoTable, 'College:', college, 'Course:', course);
+
+    // Subjects: combine theorySubjects and practicalSubjects if present
+    const marksArea = document.getElementById('marksArea');
+    marksArea.innerHTML = '';
+
+    const subjects = [];
+    if (Array.isArray(data.theorySubjects)) subjects.push(...data.theorySubjects);
+    if (Array.isArray(data.practicalSubjects)) subjects.push(...data.practicalSubjects);
+    if (Array.isArray(data.subjects)) subjects.push(...data.subjects); // fallback
+
+    if (subjects.length) {
+      const tbl = document.createElement('table');
+      tbl.className = 'table';
+      const thead = document.createElement('thead');
+      thead.innerHTML = '<tr><th>Subject</th><th>ESE</th><th>IA</th><th>Total</th><th>Grade</th><th>Credit</th></tr>';
+      tbl.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      subjects.forEach(s => {
+        const tr = document.createElement('tr');
+        const name = s.name || s.subject || s.code || '';
+        const ese = s.ese ?? s.endSem ?? s.external ?? '';
+        const ia = s.ia ?? s.internal ?? s.mid ?? '';
+        const total = s.total ?? s.obtained ?? '';
+        const grade = s.grade ?? '';
+        const credit = s.credit ?? s.credits ?? '';
+        tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td>${escapeHtml(String(ese))}</td><td>${escapeHtml(String(ia))}</td><td>${escapeHtml(String(total))}</td><td>${escapeHtml(String(grade))}</td><td>${escapeHtml(String(credit))}</td>`;
+        tbody.appendChild(tr);
+      });
+      tbl.appendChild(tbody);
+      marksArea.appendChild(tbl);
+    } else {
+      marksArea.innerHTML = '<div style="color:var(--muted)">No subject breakdown available</div>';
+    }
+
+    // SGPA / CGPA: prefer explicit cgpa then sgpa array/field
+    let cgpa = data.cgpa || data.CGPA || data.sgpa || null;
+    // If cgpa is array (some samples had sgpa array), pick last numeric or compute mean
+    if (Array.isArray(cgpa)) {
+      const nums = cgpa.map(x=>parseFloat(x)).filter(n=>!isNaN(n));
+      if (nums.length) {
+        cgpa = (nums[nums.length-1]).toFixed(2); // last sgpa
+      } else cgpa = null;
+    }
+    // sometimes server has separate 'sgpa' array and 'cgpa' value
+    if (!cgpa && Array.isArray(data.sgpa)) {
+      const nums = data.sgpa.map(x=>parseFloat(x)).filter(n=>!isNaN(n));
+      if (nums.length) cgpa = (nums[nums.length-1]).toFixed(2);
+    }
+
+    const sgpaLine = document.getElementById('sgpaLine');
+    sgpaLine.textContent = cgpa ? `SGPA / CGPA: ${cgpa}` : 'SGPA / CGPA: N/A';
+
+    // show result area + actions
+    document.getElementById('outBox').hidden = false;
+    document.getElementById('actionsRow').style.display = 'flex';
+    // hide JSON download (per request)
+    document.getElementById('downloadJson').style.display = 'none';
+    document.getElementById('msg').textContent = '';
+  }
+
+  function appendRow(table, aLabel, aValue, bLabel, bValue){
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="label-col">${escapeHtml(aLabel)}</td><td class="value-col">${escapeHtml(aValue||'')}</td><td class="label-col">${escapeHtml(bLabel)}</td><td class="value-col">${escapeHtml(bValue||'')}</td>`;
+    table.appendChild(tr);
+  }
+
+  document.getElementById('downloadPdf').addEventListener('click', () => {
+    // Build printable HTML that matches the clean PDF format user provided
+    const infoHtml = document.getElementById('infoTable').outerHTML;
+    const marksHtml = document.getElementById('marksArea').innerHTML;
+    const sgpa = document.getElementById('sgpaLine').textContent;
+    const header = `<h1 style="text-align:center;font-family:Arial;">BEU Result</h1>`;
+    const styles = `<style>body{font-family:Arial;padding:18px;color:#000}table{width:100%;border-collapse:collapse}table td,table th{border:1px solid #ddd;padding:8px}</style>`;
+    const html = `<html><head><title>Result</title>${styles}</head><body>${header}${infoHtml}${marksHtml}<p style="font-weight:700;margin-top:10px">${escapeHtml(sgpa)}</p></body></html>`;
+    const w = window.open('', '_blank', 'width=900,height=700');
     w.document.open();
-    w.document.write(`<html><head><title>Result</title>${styles}</head><body>${header}${content}</body></html>`);
+    w.document.write(html);
     w.document.close();
-    setTimeout(()=>{ w.print(); }, 500);
+    w.focus();
+    setTimeout(()=>{ w.print(); },500);
   });
 
+  function escapeHtml(s){
+    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
 </script>
 </body>
 </html>
