@@ -1,43 +1,58 @@
 // script.js - Frontend Logic
 
-// Run immediately to populate year
-(function initYear() {
+// Use DOMContentLoaded to make sure HTML exists before JS runs
+document.addEventListener('DOMContentLoaded', function() {
+  
+  // 1. Populate Years 2025-2030
   const sel = document.getElementById('year');
   if (sel) {
-    sel.innerHTML = ''; // Clear fallback
-    const currentYear = new Date().getFullYear();
-    // Populate 2020 to 2030
-    for (let y = 2020; y <= 2030; y++) {
+    sel.innerHTML = '';
+    for (let y = 2025; y <= 2030; y++) {
       const o = document.createElement('option');
       o.value = y;
       o.textContent = y;
-      // Default selection logic (Matches your PDF screenshot year 2025, or current year)
-      if (y === 2025) o.selected = true; 
+      if (y === 2025) o.selected = true;
       sel.appendChild(o);
     }
   }
-})();
+
+  // 2. Attach Event Listeners (Safe Way)
+  const goBtn = document.getElementById('go');
+  const regInput = document.getElementById('redg');
+  const pdfBtn = document.getElementById('downloadPdf');
+
+  if(goBtn) {
+    goBtn.addEventListener('click', fetchResult);
+  }
+  
+  if(regInput) {
+    regInput.addEventListener('keydown', (e) => { 
+      if (e.key === 'Enter') {
+        // Prevent default form submission if any
+        e.preventDefault();
+        fetchResult();
+      } 
+    });
+  }
+
+  if(pdfBtn) {
+    pdfBtn.addEventListener('click', downloadPdfAction);
+  }
+
+});
 
 const apiBase = '/api/result'; 
 
-// Event Listeners
-const goBtn = document.getElementById('go');
-if(goBtn) goBtn.addEventListener('click', fetchResult);
-
-const redgInput = document.getElementById('redg');
-if(redgInput) redgInput.addEventListener('keydown', (e) => { 
-    if (e.key === 'Enter') document.getElementById('go').click(); 
-});
-
-const pdfBtn = document.getElementById('downloadPdf');
-if(pdfBtn) pdfBtn.addEventListener('click', downloadPdfAction);
-
-
 async function fetchResult(){
-  const redg = document.getElementById('redg').value.trim();
-  const sem = document.getElementById('sem').value.trim();
-  const month = document.getElementById('month').value.trim();
-  const year = document.getElementById('year').value.trim();
+  const redgEl = document.getElementById('redg');
+  const semEl = document.getElementById('sem');
+  const monthEl = document.getElementById('month');
+  const yearEl = document.getElementById('year');
+
+  const redg = redgEl.value.trim();
+  const sem = semEl.value.trim();
+  const month = monthEl.value.trim();
+  const year = yearEl.value.trim();
   
   if(!redg){ alert('Enter your registration number'); return; }
 
@@ -194,4 +209,4 @@ function downloadPdfAction() {
   w.document.close();
   w.focus();
   setTimeout(() => { w.print(); }, 500);
-}
+                                }
