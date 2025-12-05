@@ -1,20 +1,34 @@
 // script.js - Frontend Logic
 
-// populate years 2020-2030
-(function(){ 
-  const sel = document.getElementById('year'); 
-  for(let y=2020;y<=2030;y++){ 
-    const o=document.createElement('option'); 
-    o.value=o.textContent=y; 
-    if(y===2025) o.selected=true; 
-    sel.appendChild(o);
-  } 
-})();
+// Wait for HTML to load before populating Year
+document.addEventListener('DOMContentLoaded', function() {
+  const sel = document.getElementById('year');
+  if (sel) {
+    sel.innerHTML = ''; // Clear previous if any
+    for (let y = 2020; y <= 2030; y++) {
+      const o = document.createElement('option');
+      o.value = o.textContent = y;
+      // Screenshot mein 2025 tha, isliye 2025 select kar rahe hain
+      if (y === 2025) o.selected = true; 
+      sel.appendChild(o);
+    }
+  }
+});
 
 const apiBase = '/api/result'; // Vercel route
 
-document.getElementById('go').addEventListener('click', fetchResult);
-document.getElementById('redg').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('go').click(); });
+// Setup Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+  const goBtn = document.getElementById('go');
+  const regInput = document.getElementById('redg');
+  const pdfBtn = document.getElementById('downloadPdf');
+
+  if(goBtn) goBtn.addEventListener('click', fetchResult);
+  if(regInput) regInput.addEventListener('keydown', (e) => { 
+    if (e.key === 'Enter') goBtn.click(); 
+  });
+  if(pdfBtn) pdfBtn.addEventListener('click', downloadPdfAction);
+});
 
 async function fetchResult(){
   const redg = document.getElementById('redg').value.trim();
@@ -108,13 +122,11 @@ function renderResult(data, semInput, yearInput){
   const theoryDiv = document.getElementById('theorySection');
   const practDiv = document.getElementById('practicalSection');
   
-  // Use arrays if provided by API, else logic to split mixed 'subjects'
   let theory = data.theorySubjects || [];
   let practical = data.practicalSubjects || [];
   
   if(theory.length === 0 && practical.length === 0 && data.subjects){
       data.subjects.forEach(s => {
-           // Basic guess: practicals often end with P or have 'Lab' in name
            const code = (s.code || '').toUpperCase();
            const name = (s.name || '').toUpperCase();
            if(code.endsWith('P') || name.includes('LAB') || name.includes('PRACTICAL')) practical.push(s);
@@ -127,10 +139,8 @@ function renderResult(data, semInput, yearInput){
 
   // SGPA Table Logic
   const tbody = document.getElementById('sgpaBody');
-  // Prepare 8 columns + CGPA
   let sgpas = ['-', '-', '-', '-', '-', '-', '-', '-'];
   
-  // If data.sgpa is array [sgpa1, sgpa2...]
   if(Array.isArray(data.sgpa)){
       data.sgpa.forEach((val, idx) => {
           if(idx < 8) sgpas[idx] = val;
@@ -139,7 +149,6 @@ function renderResult(data, semInput, yearInput){
   
   let cgpa = data.cgpa || data.cur_cgpa || data.CGPA || '-';
 
-  // Render SGPA Row
   tbody.innerHTML = `<tr>
       <td style="font-weight:bold">SGPA</td>
       <td>${sgpas[0]}</td><td>${sgpas[1]}</td><td>${sgpas[2]}</td><td>${sgpas[3]}</td>
@@ -147,7 +156,7 @@ function renderResult(data, semInput, yearInput){
       <td>${cgpa}</td>
   </tr>`;
 
-  // Remarks Color Logic
+  // Remarks
   const remarkText = (data.remarks || 'PASS').toUpperCase();
   document.getElementById('dRemarks').textContent = remarkText;
   if(remarkText.includes('FAIL')) {
@@ -159,8 +168,8 @@ function renderResult(data, semInput, yearInput){
   outBox.hidden = false;
 }
 
-// Download PDF / Print Logic
-document.getElementById('downloadPdf').addEventListener('click', () => {
+// Separate function for PDF download
+function downloadPdfAction() {
   const printContent = document.getElementById('printArea').innerHTML;
   const styles = `
     <style>
@@ -182,4 +191,4 @@ document.getElementById('downloadPdf').addEventListener('click', () => {
   w.document.close();
   w.focus();
   setTimeout(() => { w.print(); }, 500);
-});
+}
