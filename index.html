@@ -6,39 +6,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <style>
     :root{
-      --bg:#000000;
+      --bg:#000;
       --card:#0d0d0d;
       --muted:#b5b5b5;
       --accent:#00c8ff;
-      --accent-2:#12d0a6;
       --input-bg:#0a0a0a;
       --card-border:#111;
-      --text:#e6f7ff;
     }
-    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:Inter, system-ui, Arial, sans-serif;color:var(--text)}
-    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box}
-    .card{background:var(--card);padding:26px;border-radius:16px;width:100%;max-width:420px;box-shadow: 0 10px 30px rgba(0,200,255,0.08), inset 0 1px 0 rgba(255,255,255,0.02);border:1px solid var(--card-border);box-sizing:border-box}
-    h2{text-align:center;margin:0 0 18px 0;color:var(--accent);font-weight:600;letter-spacing:0.2px;font-size:20px}
-    .field{margin-bottom:12px}
-    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-    input[type="text"], select{width:100%;padding:12px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--input-bg);color:#fff;font-size:15px;box-sizing:border-box;outline:none;-webkit-appearance:none}
-    .row{display:flex;gap:10px}
-    .col{flex:1}
-    button{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px}
-    #outBox{margin-top:14px;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid var(--card-border);max-height:520px;overflow:auto;color:var(--text);font-size:14px}
-    #msg{text-align:center;margin-top:10px;color:var(--accent);font-size:13px}
-    .summary-table{width:100%;border-collapse:collapse;margin-top:8px}
-    .summary-table td{padding:10px;border:1px solid rgba(255,255,255,0.03)}
-    .subjects-table{width:100%;border-collapse:collapse;margin-top:10px}
-    .subjects-table th,.subjects-table td{padding:8px;border:1px solid rgba(255,255,255,0.04);text-align:left}
-    .subjects-table th{background:rgba(255,255,255,0.02);color:var(--muted)}
-    .muted{color:var(--muted)}
-    .sgpa{font-weight:700;margin-top:10px;color:var(--text)}
-    .download-row{display:flex;gap:12px;margin-top:12px}
-    .btn-ghost{flex:1;padding:10px;border-radius:10px;border:none;background:transparent;color:var(--muted);cursor:pointer}
-    .btn-pdf{flex:1;padding:10px;border-radius:10px;border:none;background:var(--accent-2);color:#000;cursor:pointer;font-weight:700}
-    @media (max-width:420px){.card{padding:18px;border-radius:12px;max-width:360px}h2{font-size:18px}input[type="text"], select{padding:11px;font-size:15px}}
-    .madeby{margin-top:12px;text-align:center;color:rgba(255,255,255,0.5);font-size:13px}
+    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:Inter, Arial, sans-serif;color:#fff}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;}
+    .card{background:var(--card);padding:26px;border-radius:16px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,200,255,0.06), inset 0 1px 0 rgba(255,255,255,0.02);border:1px solid var(--card-border);box-sizing:border-box;}
+    h2{text-align:center;margin:0 0 18px 0;color:var(--accent);font-weight:600;letter-spacing:0.2px;font-size:20px;}
+    .field{margin-bottom:12px;}
+    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
+    input[type="text"], select{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--input-bg);color:#fff;font-size:15px;box-sizing:border-box;outline:none;-webkit-appearance:none;}
+    .row{display:flex;gap:10px;}
+    .col{flex:1;}
+    button{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;}
+    #outBox{margin-top:14px;white-space:pre-wrap;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid var(--card-border);max-height:480px;overflow:auto;color:#e6f7ff;font-size:14px;}
+    .resultTable{width:100%;border-collapse:collapse;margin-top:8px}
+    .resultTable th,.resultTable td{border:1px solid rgba(255,255,255,0.06);padding:10px;text-align:left}
+    .muted{color:var(--muted);font-size:13px}
+    .actions{display:flex;gap:12px;margin-top:12px}
+    .btn-secondary{flex:1;padding:12px;border-radius:10px;border:none;background:#07b39f;color:#000;font-weight:700}
   </style>
 </head>
 <body>
@@ -48,34 +38,23 @@
 
       <div class="field">
         <label for="redg">Reg. No</label>
-        <input id="redg" type="text" inputmode="numeric" pattern="\d*" placeholder="e.g. 23155150039" autocomplete="off" />
+        <input id="redg" type="text" inputmode="numeric" placeholder="e.g. 23155150039" autocomplete="off" />
       </div>
 
       <div class="field">
         <label for="sem">Semester</label>
-        <div>
-          <select id="sem" aria-label="Semester">
-            <option value="I">I</option>
-            <option value="II">II</option>
-            <option value="III" selected>III</option>
-            <option value="IV">IV</option>
-            <option value="V">V</option>
-            <option value="VI">VI</option>
-            <option value="VII">VII</option>
-            <option value="VIII">VIII</option>
-          </select>
-        </div>
+        <select id="sem" aria-label="Semester">
+          <option>I</option><option>II</option><option selected>III</option><option>IV</option><option>V</option><option>VI</option><option>VII</option><option>VIII</option>
+        </select>
       </div>
 
-      <div class="row" style="margin-top:6px">
+      <div class="row">
         <div class="col field">
           <label for="month">Exam Month</label>
           <select id="month" aria-label="Exam month">
-            <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option>
-            <option selected>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
+            <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option selected>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
           </select>
         </div>
-
         <div class="col field">
           <label for="year">Exam Year</label>
           <select id="year" aria-label="Exam year"></select>
@@ -84,188 +63,164 @@
 
       <button id="go">Get Result</button>
 
-      <div id="msg" role="status" aria-live="polite"></div>
+      <div id="msg" class="muted" role="status" aria-live="polite"></div>
+
       <div id="outBox" aria-live="polite"></div>
 
-      <div class="download-row" id="downloads" style="display:none">
-        <button class="btn-pdf" id="downloadPdf">Download PDF</button>
+      <div class="actions" style="display:block">
+        <button id="downloadPdf" class="btn-secondary">Download PDF</button>
       </div>
 
-      <div class="madeby">Made with ♥ by Aryan</div>
+      <div style="text-align:center;margin-top:12px;color:var(--muted)">Made with ♥ by Aryan</div>
     </div>
   </div>
 
 <script>
-  // Populate years 2020-2030
-  (function populateYears(){
-    const start = 2020, end = 2030;
+  // populate years 2020-2030
+  (function(){
     const sel = document.getElementById('year');
-    const cur = new Date().getFullYear();
+    const start=2020,end=2030;
+    const cur=new Date().getFullYear();
     for(let y=start;y<=end;y++){
-      const o=document.createElement('option');
-      o.value=y; o.textContent=y;
+      const o=document.createElement('option'); o.value=y; o.textContent=y;
       if(y===Math.min(Math.max(cur,start),end)) o.selected=true;
       sel.appendChild(o);
     }
   })();
 
-  const apiBase = '/api/result'; // Vercel serverless path
+  const apiBase = '/api/result'; // make sure api/result.js exists on Vercel
 
-  function formatSubjectsTable(list){
-    if(!Array.isArray(list) || list.length===0) return '';
-    let html = '<table class="subjects-table"><thead><tr><th>Subject</th><th>IA</th><th>ESE</th><th>Total</th><th>Grade</th><th>Credit</th></tr></thead><tbody>';
-    for(const s of list){
-      const name = s.name || s.subject || s.code || '';
-      const ia = s.ia ?? s.internal ?? '';
-      const ese = s.ese ?? s.end ?? '';
-      const total = s.total ?? '';
-      const grade = s.grade ?? '';
-      const credit = s.credit ?? '';
-      html += `<tr><td>${escapeHtml(String(name))}</td><td>${escapeHtml(String(ia))}</td><td>${escapeHtml(String(ese))}</td><td>${escapeHtml(String(total))}</td><td>${escapeHtml(String(grade))}</td><td>${escapeHtml(String(credit))}</td></tr>`;
-    }
-    html += '</tbody></table>';
-    return html;
-  }
-
-  function computeCGPA(data){
-    // Prefer explicit cgpa field
-    if(data.cgpa) return String(data.cgpa);
-    // If sgpa array present, average non-null numeric values
-    if(Array.isArray(data.sgpa) && data.sgpa.length){
-      const nums = data.sgpa.map(x=>parseFloat(x)).filter(n=>!isNaN(n));
-      if(nums.length===0) return 'N/A';
-      const avg = (nums.reduce((a,b)=>a+b,0)/nums.length);
-      return avg.toFixed(2);
-    }
-    return 'N/A';
-  }
-
-  function renderResult(data){
-    // Build top summary table (Registration No / Semester / Name / Exam / College / Course)
-    const reg = data.redg_no || data.reg_no || data.registration || '';
-    const sem = data.semester || document.getElementById('sem').value || '';
-    const name = data.name || data.student_name || (data.student && data.student.name) || '';
-    const exam = data.exam_held || `${document.getElementById('month').value}/${document.getElementById('year').value}`;
-    const college = data.college_name || data.college || (data.student && data.student.college) || '';
-    const course = data.course || data.course_name || '';
-    let out = `<table class="summary-table"><tr><td><strong>Registration No:</strong></td><td>${escapeHtml(String(reg))}</td></tr>
-               <tr><td><strong>Semester:</strong></td><td>${escapeHtml(String(sem))}</td></tr>
-               <tr><td><strong>Name:</strong></td><td>${escapeHtml(String(name))}</td></tr>
-               <tr><td><strong>Exam:</strong></td><td>${escapeHtml(String(exam))}</td></tr>
-               <tr><td><strong>College:</strong></td><td>${escapeHtml(String(college))}</td></tr>
-               <tr><td><strong>Course:</strong></td><td>${escapeHtml(String(course))}</td></tr>
-               </table>`;
-
-    // Subjects: theorySubjects and practicalSubjects (use fallbacks)
-    const theory = data.theorySubjects || data.theory || data.theory_subjects || [];
-    const practical = data.practicalSubjects || data.practical || data.practical_subjects || [];
-
-    if(theory.length){
-      out += `<h3 style="margin-top:12px;color:var(--muted)">Theory Subjects</h3>` + formatSubjectsTable(theory);
-    }
-    if(practical.length){
-      out += `<h3 style="margin-top:12px;color:var(--muted)">Practical Subjects</h3>` + formatSubjectsTable(practical);
-    }
-
-    // SGPA / CGPA: prefer data.cgpa or compute
-    const cgpa = computeCGPA(data);
-    out += `<div class="sgpa"><span class="muted">SGPA / CGPA:</span> ${escapeHtml(String(cgpa))}</div>`;
-
-    document.getElementById('outBox').innerHTML = out;
-    // show download PDF button
-    document.getElementById('downloads').style.display = 'flex';
-    window.latestResultForPdf = {meta:{reg,sem,name,exam,college,course},theory,practical,cgpa};
-  }
-
-  document.getElementById('go').addEventListener('click', async function(){
+  document.getElementById('go').addEventListener('click', async ()=>{
     const redg = document.getElementById('redg').value.trim();
     const sem = document.getElementById('sem').value.trim();
     const month = document.getElementById('month').value.trim();
     const year = document.getElementById('year').value.trim();
+
     if(!redg){ alert('Enter registration number'); return; }
-    const exam_held = `${month}/${year}`;
 
     document.getElementById('msg').textContent = 'Loading...';
-    document.getElementById('outBox').textContent = '';
+    document.getElementById('outBox').innerHTML = '';
 
-    const url = `${apiBase}?redg_no=${encodeURIComponent(redg)}&semester=${encodeURIComponent(sem)}&year=${encodeURIComponent(year)}&exam_held=${encodeURIComponent(exam_held)}`;
+    const url = `${apiBase}?redg_no=${encodeURIComponent(redg)}&semester=${encodeURIComponent(sem)}&exam_month=${encodeURIComponent(month)}&exam_year=${encodeURIComponent(year)}`;
+
     try{
       const r = await fetch(url);
-      const text = await r.text();
-      // Try parse json safely
-      let j;
-      try{ j = JSON.parse(text); }
-      catch{
-        // If returned a JSON object string inside text, try to extract braces
-        const start = text.indexOf('{');
-        const end = text.lastIndexOf('}');
-        if(start>=0 && end>start){
-          try{ j = JSON.parse(text.slice(start,end+1)); }catch(e){ j = { data: { raw: text } }; }
-        } else j = { data: { raw: text } };
-      }
+      const j = await r.json();
 
       document.getElementById('msg').textContent = '';
+
       if(j.error){ document.getElementById('outBox').textContent = 'Error: ' + j.error; return; }
 
-      const data = j.data || j;
+      const data = j.data || {};
+      // If BEU returned raw HTML/text:
       if(data.raw){
-        // if raw HTML/text returned, show snippet
-        document.getElementById('outBox').textContent = String(data.raw).slice(0,8000) + (String(data.raw).length>8000 ? '\n\n...truncated' : '');
+        document.getElementById('outBox').textContent = 'Server returned non-JSON response. Look in console for raw output.';
+        console.log('RAW BEU RESPONSE:', data.raw);
         return;
       }
-      // render cleaned result
-      renderResult(data);
+
+      // Format output exactly like your PDF sample.
+      // Top info table:
+      const tbl = document.createElement('table');
+      tbl.className = 'resultTable';
+      tbl.innerHTML = `
+        <tr><th>Registration No:</th><td>${escapeHtml(data.redg_no || redg || '')}</td></tr>
+        <tr><th>Semester:</th><td>${escapeHtml(data.semester || sem || '')}</td></tr>
+        <tr><th>Name:</th><td>${escapeHtml(data.name || data.student_name || '')}</td></tr>
+        <tr><th>Exam:</th><td>${escapeHtml(data.exam_held || (month + '/' + year) || '')}</td></tr>
+        <tr><th>College:</th><td>${escapeHtml(data.college_name || data.college || '')}</td></tr>
+        <tr><th>Course:</th><td>${escapeHtml(data.course || data.course_name || '')}</td></tr>
+      `;
+
+      // Subjects table (theory + practical)
+      const subjList = [];
+      if(Array.isArray(data.theorySubjects)) subjList.push(...data.theorySubjects);
+      if(Array.isArray(data.practicalSubjects)) subjList.push(...data.practicalSubjects);
+      if(Array.isArray(data.subjects)) subjList.push(...data.subjects);
+      if(Array.isArray(data.results)) subjList.push(...data.results);
+      // Remove duplicates by code
+      const byCode = {};
+      subjList.forEach(s=>{ if(s && s.code) byCode[s.code]=s; });
+      const subjects = Object.values(byCode);
+
+      let subjectsHtml = '';
+      if(subjects.length){
+        subjectsHtml += `<h3 style="margin-top:12px">Subjects</h3><table class="resultTable"><thead><tr><th>Code</th><th>Subject</th><th>IA</th><th>ESE</th><th>Total</th><th>Grade</th></tr></thead><tbody>`;
+        subjects.forEach(s=>{
+          const code = s.code||'';
+          const name = s.name||s.subject||'';
+          const ia = s.ia ?? s.internal ?? '';
+          const ese = s.ese ?? s.exam ?? '';
+          const total = s.total ?? '';
+          const grade = s.grade ?? s.result ?? '';
+          subjectsHtml += `<tr><td>${escapeHtml(code)}</td><td>${escapeHtml(name)}</td><td>${escapeHtml(String(ia))}</td><td>${escapeHtml(String(ese))}</td><td>${escapeHtml(String(total))}</td><td>${escapeHtml(String(grade))}</td></tr>`;
+        });
+        subjectsHtml += `</tbody></table>`;
+      }
+
+      // SGPA / CGPA: prefer direct fields if present
+      const sgpa = data.sgpa && Array.isArray(data.sgpa) ? data.sgpa[data.sgpa.length-1] : (data.sgpa || null);
+      const cgpa = data.cgpa || data.CGPA || null;
+
+      const sgpaLine = `<p style="margin-top:12px"><strong>SGPA / CGPA:</strong> ${escapeHtml(String(cgpa || sgpa || 'N/A'))}</p>`;
+
+      const container = document.getElementById('outBox');
+      container.innerHTML = '';
+      container.appendChild(tbl);
+      container.insertAdjacentHTML('beforeend', subjectsHtml);
+      container.insertAdjacentHTML('beforeend', sgpaLine);
+
+      // Save latest result for PDF download
+      window.latestResultData = { header: {
+        reg: data.redg_no || redg,
+        semester: data.semester || sem,
+        name: data.name || data.student_name || '',
+        exam: data.exam_held || (month + '/' + year),
+        college: data.college_name || data.college || '',
+        course: data.course || data.course_name || ''
+      }, subjects, cgpa: cgpa || sgpa || null };
+
     }catch(err){
       document.getElementById('msg').textContent = '';
       document.getElementById('outBox').textContent = 'Fetch error: ' + (err.message || err);
     }
   });
 
-  // PDF download - opens printable view
-  document.getElementById('downloadPdf').addEventListener('click', function(){
-    const d = window.latestResultForPdf;
-    if(!d) return alert('No result to print');
-    let html = `<div style="font-family:Arial;padding:18px;color:#000;background:#fff">`;
-    html += `<h2 style="text-align:center;">BEU Result</h2>`;
-    html += `<table style="width:100%;border-collapse:collapse;margin-top:8px"><tr><td style="padding:8px;border:1px solid #ccc"><strong>Registration No:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.reg)}</td></tr>`;
-    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>Semester:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.sem)}</td></tr>`;
-    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>Name:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.name)}</td></tr>`;
-    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>Exam:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.exam)}</td></tr>`;
-    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>College:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.college)}</td></tr>`;
-    html += `<tr><td style="padding:8px;border:1px solid #ccc"><strong>Course:</strong></td><td style="padding:8px;border:1px solid #ccc">${escapeHtml(d.meta.course)}</td></tr>`;
-    html += `</table>`;
+  // Download PDF — simple print-style
+  document.getElementById('downloadPdf').addEventListener('click', ()=>{
+    const d = window.latestResultData;
+    if(!d){ alert('Pehle result fetch karo'); return; }
+    const header = `<h2 style="color:#00c8ff">BEU Result</h2>
+      <p><strong>Registration No:</strong> ${escapeHtml(d.header.reg)} &nbsp; <strong>Semester:</strong> ${escapeHtml(d.header.semester)}</p>
+      <p><strong>Name:</strong> ${escapeHtml(d.header.name)}</p>
+      <p><strong>Exam:</strong> ${escapeHtml(d.header.exam)} &nbsp; <strong>College:</strong> ${escapeHtml(d.header.college)}</p>
+      <hr/>`;
 
-    function tableHtml(list,title){
-      if(!Array.isArray(list) || list.length===0) return '';
-      let out = `<h3 style="margin-top:12px">${escapeHtml(title)}</h3>`;
-      out += `<table style="width:100%;border-collapse:collapse;margin-top:6px"><thead><tr><th style="border:1px solid #ccc;padding:6px">Subject</th><th style="border:1px solid #ccc;padding:6px">IA</th><th style="border:1px solid #ccc;padding:6px">ESE</th><th style="border:1px solid #ccc;padding:6px">Total</th><th style="border:1px solid #ccc;padding:6px">Grade</th><th style="border:1px solid #ccc;padding:6px">Credit</th></tr></thead><tbody>`;
-      for(const s of list){
-        out += `<tr><td style="border:1px solid #ccc;padding:6px">${escapeHtml(s.name||s.subject||s.code||'')}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.ia||''))}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.ese||''))}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.total||''))}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.grade||''))}</td><td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.credit||''))}</td></tr>`;
-      }
-      out += `</tbody></table>`;
-      return out;
-    }
+    let subjectsHtml = '<table style="width:100%;border-collapse:collapse">';
+    subjectsHtml += '<tr><th style="border:1px solid #ccc;padding:6px">Code</th><th style="border:1px solid #ccc;padding:6px">Subject</th><th style="border:1px solid #ccc;padding:6px">IA</th><th style="border:1px solid #ccc;padding:6px">ESE</th><th style="border:1px solid #ccc;padding:6px">Total</th><th style="border:1px solid #ccc;padding:6px">Grade</th></tr>';
+    (d.subjects || []).forEach(s=>{
+      subjectsHtml += `<tr>
+        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(s.code||'')}</td>
+        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(s.name||'')}</td>
+        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.ia||''))}</td>
+        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.ese||''))}</td>
+        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.total||''))}</td>
+        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.grade||''))}</td>
+      </tr>`;
+    });
+    subjectsHtml += '</table>';
 
-    html += tableHtml(d.theory,'Theory Subjects');
-    html += tableHtml(d.practical,'Practical Subjects');
+    const footer = `<p style="margin-top:12px"><strong>SGPA / CGPA:</strong> ${escapeHtml(String(d.cgpa || 'N/A'))}</p>`;
 
-    html += `<p style="font-weight:700;margin-top:12px">SGPA / CGPA: ${escapeHtml(String(d.cgpa || 'N/A'))}</p>`;
-    html += `</div>`;
-
-    const w = window.open('', '_blank', 'width=900,height=700');
-    w.document.open();
-    w.document.write(html);
-    w.document.close();
-    setTimeout(()=>{ w.print(); },400);
+    const win = window.open('', '_blank', 'width=900,height=700');
+    win.document.write(`<html><head><meta charset="utf-8"><title>BEU Result</title></head><body style="font-family:Arial;padding:18px;color:#000">${header}${subjectsHtml}${footer}</body></html>`);
+    win.document.close();
+    setTimeout(()=>{ win.print(); }, 500);
   });
 
-  // helper
   function escapeHtml(s){
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
-
-  // allow enter key
-  document.getElementById('redg').addEventListener('keydown', function(e){ if(e.key==='Enter') document.getElementById('go').click(); });
 </script>
 </body>
 </html>
