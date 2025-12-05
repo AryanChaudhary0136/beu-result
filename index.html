@@ -16,17 +16,38 @@
     }
     html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:Inter,Arial,sans-serif;color:#fff}
     .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;}
-    .card{background:var(--card);padding:26px;border-radius:16px;width:100%;max-width:800px; /* Increased width for marksheet */ box-shadow:0 10px 30px rgba(0,200,255,0.08);border:1px solid var(--card-border);box-sizing:border-box;}
+    .card{background:var(--card);padding:26px;border-radius:16px;width:100%;max-width:800px; box-shadow:0 10px 30px rgba(0,200,255,0.08);border:1px solid var(--card-border);box-sizing:border-box;}
     h2{text-align:center;margin:0 0 18px 0;color:var(--accent);font-weight:600;letter-spacing:0.2px;font-size:20px;}
     .field{margin-bottom:12px;}
     label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
-    input[type="text"], select{width:100%;padding:12px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--input-bg);color:#fff;font-size:15px;box-sizing:border-box;outline:none;-webkit-appearance:none;}
+    
+    /* UPDATED INPUT STYLES - Removed appearance:none for Select to show arrow */
+    input[type="text"], select {
+      width:100%;
+      padding:12px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.04);
+      background:var(--input-bg);
+      color:#fff;
+      font-size:15px;
+      box-sizing:border-box;
+      outline:none;
+    }
+    /* Ensure arrow is visible on dropdowns */
+    select {
+      -webkit-appearance: auto;
+      -moz-appearance: auto;
+      appearance: auto;
+      background-color: var(--input-bg);
+      cursor: pointer;
+    }
+
     .row{display:flex;gap:10px;}
     .col{flex:1;}
     button{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;}
     #msg{ text-align:center;margin-top:10px;color:var(--accent);font-size:13px }
     
-    /* MARKSHEET SPECIFIC STYLES */
+    /* MARKSHEET STYLES */
     #outBox{margin-top:20px;background:#fff;color:#000;padding:0;border-radius:4px;overflow:hidden;font-family:'Times New Roman', Times, serif;}
     .paper{padding:20px;box-sizing:border-box;width:100%;overflow-x:auto;}
     .header-text{text-align:center;margin-bottom:15px;}
@@ -37,19 +58,13 @@
     .info-table td, .marks-table th, .marks-table td, .sgpa-table th, .sgpa-table td{border:1px solid #000;padding:6px;}
     
     .info-label{font-weight:bold;width:140px;}
-    
     .section-title{font-size:12px;font-weight:bold;margin-bottom:5px;text-transform:uppercase;color:#555;}
-    
     .marks-table th{background:#f2f2f2;text-align:center;font-weight:bold;}
     .marks-table td{text-align:center;}
-    .marks-table td:nth-child(2){text-align:left;} /* Subject Name align left */
-    
+    .marks-table td:nth-child(2){text-align:left;}
     .sgpa-table th{background:#f2f2f2;text-align:center;}
     .sgpa-table td{text-align:center;font-weight:bold;}
-    
     .remarks-box{border:1px solid #000;padding:8px;margin-bottom:10px;font-weight:bold;font-size:13px;}
-    .remarks-box span{color:#d00000;}
-
     .footer-notes{font-size:10px;color:#444;line-height:1.4;}
     .actions{display:flex;gap:12px;margin-top:12px;padding:0 20px 20px 20px;background:var(--card);}
     .btn-pdf{flex:1;padding:12px;border-radius:10px;border:none;background:var(--green);color:#002; font-weight:700;cursor:pointer}
@@ -87,7 +102,10 @@
         </div>
         <div class="col field">
           <label for="year">Exam Year</label>
-          <select id="year" aria-label="Exam year"></select>
+          <select id="year" aria-label="Exam year">
+            <!-- Fallback option in case JS fails temporarily -->
+            <option value="2025">2025</option>
+          </select>
         </div>
       </div>
 
@@ -95,16 +113,14 @@
 
       <div id="msg" role="status" aria-live="polite"></div>
 
-      <!-- Result area (clean paper style) -->
+      <!-- Result area -->
       <div id="outBox" aria-live="polite" hidden>
         <div class="paper" id="printArea">
-          <!-- Header -->
           <div class="header-text">
             <h1>Bihar Engineering University, Patna</h1>
             <h3 id="examTitle">B.Tech. Examination</h3>
           </div>
 
-          <!-- Student Info Grid -->
           <table class="info-table">
             <tr>
               <td class="info-label">Semester:</td><td id="dSem"></td>
@@ -128,13 +144,9 @@
             </tr>
           </table>
 
-          <!-- Theory Table -->
           <div id="theorySection"></div>
-
-          <!-- Practical Table -->
           <div id="practicalSection"></div>
 
-          <!-- SGPA Table -->
           <div class="section-title" style="margin-top:20px;">SGPA / CGPA</div>
           <table class="sgpa-table">
             <thead>
@@ -142,14 +154,10 @@
                 <th>Semester</th><th>I</th><th>II</th><th>III</th><th>IV</th><th>V</th><th>VI</th><th>VII</th><th>VIII</th><th>Cur. CGPA</th>
               </tr>
             </thead>
-            <tbody id="sgpaBody">
-              <!-- JS will fill -->
-            </tbody>
+            <tbody id="sgpaBody"></tbody>
           </table>
 
-          <div class="remarks-box">
-            Remarks: <span id="dRemarks">PASS</span>
-          </div>
+          <div class="remarks-box">Remarks: <span id="dRemarks">PASS</span></div>
 
           <div class="footer-notes">
             <b>Note:</b><br>
@@ -168,117 +176,6 @@
     </div>
   </div>
 
-<!-- Linking separate JS file -->
 <script src="script.js"></script>
-</body>
-</html>      document.getElementById('msg').textContent = '';
-      document.getElementById('outBox').hidden = false;
-      document.getElementById('outBox').textContent = 'Fetch error: ' + (err.message || err);
-    }
-  }
-
-  function renderResult(data){
-    // Clear
-    const infoTable = document.getElementById('infoTable');
-    infoTable.innerHTML = '';
-
-    // Use safe getters (fields seen in BEU sample)
-    const reg = data.redg_no || data.reg_no || data.registration_no || '';
-    const sem = data.semester || document.getElementById('sem').value;
-    const exam = data.exam_held || `${document.getElementById('month').value}/${document.getElementById('year').value}`;
-    const name = data.name || data.student_name || '';
-    const college = data.college_name || data.college || data.collegeName || '';
-    const course = data.course || data.course_name || data.courseName || '';
-
-    // Build info rows
-    appendRow(infoTable, 'Registration No:', reg, 'Semester:', sem);
-    appendRow(infoTable, 'Name:', name, 'Exam:', exam);
-    appendRow(infoTable, 'College:', college, 'Course:', course);
-
-    // Subjects: combine theorySubjects and practicalSubjects if present
-    const marksArea = document.getElementById('marksArea');
-    marksArea.innerHTML = '';
-
-    const subjects = [];
-    if (Array.isArray(data.theorySubjects)) subjects.push(...data.theorySubjects);
-    if (Array.isArray(data.practicalSubjects)) subjects.push(...data.practicalSubjects);
-    if (Array.isArray(data.subjects)) subjects.push(...data.subjects); // fallback
-
-    if (subjects.length) {
-      const tbl = document.createElement('table');
-      tbl.className = 'table';
-      const thead = document.createElement('thead');
-      thead.innerHTML = '<tr><th>Subject</th><th>ESE</th><th>IA</th><th>Total</th><th>Grade</th><th>Credit</th></tr>';
-      tbl.appendChild(thead);
-      const tbody = document.createElement('tbody');
-      subjects.forEach(s => {
-        const tr = document.createElement('tr');
-        const name = s.name || s.subject || s.code || '';
-        const ese = s.ese ?? s.endSem ?? s.external ?? '';
-        const ia = s.ia ?? s.internal ?? s.mid ?? '';
-        const total = s.total ?? s.obtained ?? '';
-        const grade = s.grade ?? '';
-        const credit = s.credit ?? s.credits ?? '';
-        tr.innerHTML = `<td>${escapeHtml(String(name))}</td><td>${escapeHtml(String(ese))}</td><td>${escapeHtml(String(ia))}</td><td>${escapeHtml(String(total))}</td><td>${escapeHtml(String(grade))}</td><td>${escapeHtml(String(credit))}</td>`;
-        tbody.appendChild(tr);
-      });
-      tbl.appendChild(tbody);
-      marksArea.appendChild(tbl);
-    } else {
-      marksArea.innerHTML = '<div style="color:var(--muted)">No subject breakdown available</div>';
-    }
-
-    // SGPA / CGPA: prefer explicit cgpa then sgpa array/field
-    let cgpa = data.cgpa || data.CGPA || data.sgpa || null;
-    // If cgpa is array (some samples had sgpa array), pick last numeric or compute mean
-    if (Array.isArray(cgpa)) {
-      const nums = cgpa.map(x=>parseFloat(x)).filter(n=>!isNaN(n));
-      if (nums.length) {
-        cgpa = (nums[nums.length-1]).toFixed(2); // last sgpa
-      } else cgpa = null;
-    }
-    // sometimes server has separate 'sgpa' array and 'cgpa' value
-    if (!cgpa && Array.isArray(data.sgpa)) {
-      const nums = data.sgpa.map(x=>parseFloat(x)).filter(n=>!isNaN(n));
-      if (nums.length) cgpa = (nums[nums.length-1]).toFixed(2);
-    }
-
-    const sgpaLine = document.getElementById('sgpaLine');
-    sgpaLine.textContent = cgpa ? `SGPA / CGPA: ${cgpa}` : 'SGPA / CGPA: N/A';
-
-    // show result area + actions
-    document.getElementById('outBox').hidden = false;
-    document.getElementById('actionsRow').style.display = 'flex';
-    // hide JSON download (per request)
-    document.getElementById('downloadJson').style.display = 'none';
-    document.getElementById('msg').textContent = '';
-  }
-
-  function appendRow(table, aLabel, aValue, bLabel, bValue){
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td class="label-col">${escapeHtml(aLabel)}</td><td class="value-col">${escapeHtml(aValue||'')}</td><td class="label-col">${escapeHtml(bLabel)}</td><td class="value-col">${escapeHtml(bValue||'')}</td>`;
-    table.appendChild(tr);
-  }
-
-  document.getElementById('downloadPdf').addEventListener('click', () => {
-    // Build printable HTML that matches the clean PDF format user provided
-    const infoHtml = document.getElementById('infoTable').outerHTML;
-    const marksHtml = document.getElementById('marksArea').innerHTML;
-    const sgpa = document.getElementById('sgpaLine').textContent;
-    const header = `<h1 style="text-align:center;font-family:Arial;">BEU Result</h1>`;
-    const styles = `<style>body{font-family:Arial;padding:18px;color:#000}table{width:100%;border-collapse:collapse}table td,table th{border:1px solid #ddd;padding:8px}</style>`;
-    const html = `<html><head><title>Result</title>${styles}</head><body>${header}${infoHtml}${marksHtml}<p style="font-weight:700;margin-top:10px">${escapeHtml(sgpa)}</p></body></html>`;
-    const w = window.open('', '_blank', 'width=900,height=700');
-    w.document.open();
-    w.document.write(html);
-    w.document.close();
-    w.focus();
-    setTimeout(()=>{ w.print(); },500);
-  });
-
-  function escapeHtml(s){
-    return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
-</script>
 </body>
 </html>
