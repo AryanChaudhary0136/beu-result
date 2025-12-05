@@ -1,80 +1,185 @@
-// api/result.js
-// Vercel serverless proxy for BEU result endpoint
-// Robust: handles JSON and non-JSON responses, caches short-term.
+// script.js - Frontend Logic
 
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-const cache = new Map();
+// populate years 2020-2030
+(function(){ 
+  const sel = document.getElementById('year'); 
+  for(let y=2020;y<=2030;y++){ 
+    const o=document.createElement('option'); 
+    o.value=o.textContent=y; 
+    if(y===2025) o.selected=true; 
+    sel.appendChild(o);
+  } 
+})();
 
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+const apiBase = '/api/result'; // Vercel route
 
-  if (req.method === 'OPTIONS') return res.status(204).end();
-  if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+document.getElementById('go').addEventListener('click', fetchResult);
+document.getElementById('redg').addEventListener('keydown', (e)=>{ if(e.key==='Enter') document.getElementById('go').click(); });
 
-  const redg_no = (req.query.redg_no || '').trim();
-  const semester = (req.query.semester || 'III').trim();
-  const year = (req.query.year || new Date().getFullYear()).trim();
-  const month = (req.query.month || '').trim();
-  const exam_held = (req.query.exam_held || (month ? `${month}/${year}` : `${month}/${year}`)).trim();
+async function fetchResult(){
+  const redg = document.getElementById('redg').value.trim();
+  const sem = document.getElementById('sem').value.trim();
+  const month = document.getElementById('month').value.trim();
+  const year = document.getElementById('year').value.trim();
+  
+  if(!redg){ alert('Enter your registration number'); return; }
 
-  if (!/^\d{4,20}$/.test(redg_no)) {
-    return res.status(400).json({ error: 'Invalid registration number (redg_no)' });
-  }
+  const exam_held = `${month}/${year}`;
+  const url = `${apiBase}?redg_no=${encodeURIComponent(redg)}&semester=${encodeURIComponent(sem)}&year=${encodeURIComponent(year)}&exam_held=${encodeURIComponent(exam_held)}`;
 
-  const cacheKey = `${redg_no}|${semester}|${year}|${exam_held}`;
-  const now = Date.now();
-  if (cache.has(cacheKey)) {
-    const entry = cache.get(cacheKey);
-    if (now - entry.t < CACHE_TTL) {
-      return res.status(200).json({ source: 'cache', data: entry.data });
-    } else {
-      cache.delete(cacheKey);
-    }
-  }
-
-  // BEU endpoint from HAR
-  const beuBase = 'https://beu-bih.ac.in/backend/v1/result/get-result';
-  const beuUrl = `${beuBase}?year=${encodeURIComponent(year)}&redg_no=${encodeURIComponent(redg_no)}&semester=${encodeURIComponent(semester)}&exam_held=${encodeURIComponent(exam_held)}`;
-
+  document.getElementById('msg').textContent = 'Loading...';
+  document.getElementById('outBox').hidden = true;
+  
   try {
-    const r = await fetch(beuUrl, {
-      method: 'GET',
-      headers: {
-        'User-Agent': 'Result-Viewer/1.0',
-        'Accept': 'application/json, text/plain, */*'
-      },
-    });
-
-    const text = await r.text();
-    let parsed = null;
-
-    // Try to parse JSON strictly first
-    try {
-      parsed = JSON.parse(text);
-    } catch (e) {
-      // If not strict JSON, try to find JSON substring (defensive)
-      const firstBrace = text.indexOf('{');
-      const lastBrace = text.lastIndexOf('}');
-      if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
-        const maybe = text.slice(firstBrace, lastBrace + 1);
-        try {
-          parsed = JSON.parse(maybe);
-        } catch (e2) {
-          // fall back to raw
-          parsed = { raw: text };
-        }
-      } else {
-        parsed = { raw: text };
-      }
+    const r = await fetch(url);
+    const ct = r.headers.get('content-type') || '';
+    let dataWrap;
+    if (ct.includes('application/json')) {
+      dataWrap = await r.json();
+    } else {
+      const txt = await r.text();
+      try { dataWrap = JSON.parse(txt); } catch { dataWrap = { data: { raw: txt } }; }
     }
 
-    // Cache parsed result
-    cache.set(cacheKey, { t: now, data: parsed });
+    document.getElementById('msg').textContent = '';
 
-    return res.status(200).json({ source: 'beu', status: r.status, data: parsed });
+    if (dataWrap.error) {
+      alert('Error: ' + dataWrap.error);
+      return;
+    }
+
+    const data = (dataWrap.data && typeof dataWrap.data === 'object') ? dataWrap.data : dataWrap;
+    renderResult(data, sem, year);
   } catch (err) {
-    return res.status(500).json({ error: err.message || String(err) });
+    document.getElementById('msg').textContent = '';
+    alert('Fetch error: ' + (err.message || err));
   }
 }
+
+function renderResult(data, semInput, yearInput){
+  const outBox = document.getElementById('outBox');
+  
+  // Fill Header Info
+  document.getElementById('examTitle').textContent = `B.Tech. ${data.semester || semInput} Semester Examination, ${yearInput}`;
+  document.getElementById('dSem').textContent = data.semester || semInput;
+  document.getElementById('dExam').textContent = data.exam_held || '';
+  document.getElementById('dReg').textContent = data.redg_no || data.registration_no || '';
+  document.getElementById('dName').textContent = (data.name || data.student_name || '').toUpperCase();
+  document.getElementById('dFather').textContent = (data.father_name || '').toUpperCase();
+  document.getElementById('dMother').textContent = (data.mother_name || '').toUpperCase();
+  document.getElementById('dCollege').textContent = data.college_name || '';
+  document.getElementById('dCourse').textContent = data.course_name || '';
+
+  // Helper to build Subject Table
+  function buildSubTable(subjects, title) {
+      if(!subjects || subjects.length === 0) return '';
+      let rows = subjects.map(s => `
+          <tr>
+              <td>${s.code || s.subject_code || ''}</td>
+              <td>${s.name || s.subject_name || ''}</td>
+              <td>${s.ese || ''}</td>
+              <td>${s.ia || ''}</td>
+              <td>${s.total || s.obtained || ''}</td>
+              <td>${s.grade || ''}</td>
+              <td>${s.credit || ''}</td>
+          </tr>
+      `).join('');
+      
+      return `
+          <div class="section-title">${title}</div>
+          <table class="marks-table">
+              <thead>
+                  <tr>
+                      <th style="width:15%">Subject Code</th>
+                      <th>Subject Name</th>
+                      <th style="width:8%">ESE</th>
+                      <th style="width:8%">IA</th>
+                      <th style="width:8%">Total</th>
+                      <th style="width:8%">Grade</th>
+                      <th style="width:8%">Credit</th>
+                  </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+          </table>
+      `;
+  }
+
+  // Theory & Practical Areas Separation Logic
+  const theoryDiv = document.getElementById('theorySection');
+  const practDiv = document.getElementById('practicalSection');
+  
+  // Use arrays if provided by API, else logic to split mixed 'subjects'
+  let theory = data.theorySubjects || [];
+  let practical = data.practicalSubjects || [];
+  
+  if(theory.length === 0 && practical.length === 0 && data.subjects){
+      data.subjects.forEach(s => {
+           // Basic guess: practicals often end with P or have 'Lab' in name
+           const code = (s.code || '').toUpperCase();
+           const name = (s.name || '').toUpperCase();
+           if(code.endsWith('P') || name.includes('LAB') || name.includes('PRACTICAL')) practical.push(s);
+           else theory.push(s);
+      });
+  }
+
+  theoryDiv.innerHTML = buildSubTable(theory, 'THEORY');
+  practDiv.innerHTML = buildSubTable(practical, 'PRACTICAL');
+
+  // SGPA Table Logic
+  const tbody = document.getElementById('sgpaBody');
+  // Prepare 8 columns + CGPA
+  let sgpas = ['-', '-', '-', '-', '-', '-', '-', '-'];
+  
+  // If data.sgpa is array [sgpa1, sgpa2...]
+  if(Array.isArray(data.sgpa)){
+      data.sgpa.forEach((val, idx) => {
+          if(idx < 8) sgpas[idx] = val;
+      });
+  }
+  
+  let cgpa = data.cgpa || data.cur_cgpa || data.CGPA || '-';
+
+  // Render SGPA Row
+  tbody.innerHTML = `<tr>
+      <td style="font-weight:bold">SGPA</td>
+      <td>${sgpas[0]}</td><td>${sgpas[1]}</td><td>${sgpas[2]}</td><td>${sgpas[3]}</td>
+      <td>${sgpas[4]}</td><td>${sgpas[5]}</td><td>${sgpas[6]}</td><td>${sgpas[7]}</td>
+      <td>${cgpa}</td>
+  </tr>`;
+
+  // Remarks Color Logic
+  const remarkText = (data.remarks || 'PASS').toUpperCase();
+  document.getElementById('dRemarks').textContent = remarkText;
+  if(remarkText.includes('FAIL')) {
+      document.getElementById('dRemarks').style.color = 'red';
+  } else {
+      document.getElementById('dRemarks').style.color = 'green';
+  }
+
+  outBox.hidden = false;
+}
+
+// Download PDF / Print Logic
+document.getElementById('downloadPdf').addEventListener('click', () => {
+  const printContent = document.getElementById('printArea').innerHTML;
+  const styles = `
+    <style>
+      body{font-family:'Times New Roman', serif; padding:20px; color:#000;}
+      table{width:100%;border-collapse:collapse;margin-bottom:15px;font-size:12px;}
+      td,th{border:1px solid #000;padding:5px;}
+      .header-text{text-align:center;margin-bottom:20px;}
+      .section-title{font-weight:bold;margin-top:15px;margin-bottom:5px;font-size:13px;text-transform:uppercase;}
+      .remarks-box{border:1px solid #000;padding:10px;margin-top:10px;font-weight:bold;}
+      .footer-notes{font-size:10px;margin-top:30px;color:#444;}
+      .marks-table th { background-color: #f0f0f0 !important; -webkit-print-color-adjust: exact; }
+    </style>
+  `;
+  
+  const w = window.open('', '_blank', 'width=900,height=800');
+  w.document.write('<html><head><title>Print Result</title>' + styles + '</head><body>');
+  w.document.write(printContent);
+  w.document.write('</body></html>');
+  w.document.close();
+  w.focus();
+  setTimeout(() => { w.print(); }, 500);
+});
