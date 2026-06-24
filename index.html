@@ -1,226 +1,459 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>BEU Result Viewer</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>
-    :root{
-      --bg:#000;
-      --card:#0d0d0d;
-      --muted:#b5b5b5;
-      --accent:#00c8ff;
-      --input-bg:#0a0a0a;
-      --card-border:#111;
-    }
-    html,body{height:100%;margin:0;padding:0;background:var(--bg);font-family:Inter, Arial, sans-serif;color:#fff}
-    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;}
-    .card{background:var(--card);padding:26px;border-radius:16px;width:100%;max-width:420px;box-shadow:0 10px 30px rgba(0,200,255,0.06), inset 0 1px 0 rgba(255,255,255,0.02);border:1px solid var(--card-border);box-sizing:border-box;}
-    h2{text-align:center;margin:0 0 18px 0;color:var(--accent);font-weight:600;letter-spacing:0.2px;font-size:20px;}
-    .field{margin-bottom:12px;}
-    label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px;}
-    input[type="text"], select{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:var(--input-bg);color:#fff;font-size:15px;box-sizing:border-box;outline:none;-webkit-appearance:none;}
-    .row{display:flex;gap:10px;}
-    .col{flex:1;}
-    button{width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#000;font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;}
-    #outBox{margin-top:14px;white-space:pre-wrap;background:rgba(255,255,255,0.02);padding:12px;border-radius:10px;border:1px solid var(--card-border);max-height:480px;overflow:auto;color:#e6f7ff;font-size:14px;}
-    .resultTable{width:100%;border-collapse:collapse;margin-top:8px}
-    .resultTable th,.resultTable td{border:1px solid rgba(255,255,255,0.06);padding:10px;text-align:left}
-    .muted{color:var(--muted);font-size:13px}
-    .actions{display:flex;gap:12px;margin-top:12px}
-    .btn-secondary{flex:1;padding:12px;border-radius:10px;border:none;background:#07b39f;color:#000;font-weight:700}
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BEU Result Viewer</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a1a;
+    padding: 20px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  h1 {
+    text-align: center;
+    color: #1a3c8c;
+    font-size: 22px;
+    margin: 0 0 4px;
+  }
+  .subtitle {
+    text-align: center;
+    color: #555;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .form-grid .full { grid-column: 1 / -1; }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: #1a3c8c;
+  }
+  button {
+    margin-top: 16px;
+    width: 100%;
+    padding: 12px;
+    background: #1a3c8c;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  button:hover { background: #142f6e; }
+  button:disabled { background: #999; cursor: not-allowed; }
+
+  .error-box {
+    background: #fde8e8;
+    border: 1px solid #f5b5b5;
+    color: #a31515;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+
+  .result-header {
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .result-header h2 {
+    color: #1a3c8c;
+    margin: 0 0 2px;
+    font-size: 19px;
+  }
+  .result-header .uni-sub {
+    font-size: 13px;
+    color: #555;
+  }
+
+  table.info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 18px;
+    font-size: 14px;
+  }
+  table.info-table td {
+    border: 1px solid #ddd;
+    padding: 8px 10px;
+  }
+  table.info-table td.label {
+    font-weight: 600;
+    background: #f7f8fa;
+    width: 28%;
+  }
+
+  h3.section-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #777;
+    margin: 18px 0 8px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 4px;
+  }
+
+  table.marks-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  table.marks-table th, table.marks-table td {
+    border: 1px solid #ddd;
+    padding: 8px 10px;
+    text-align: center;
+  }
+  table.marks-table th {
+    background: #1a3c8c;
+    color: #fff;
+    font-size: 13px;
+  }
+  table.marks-table td.subject-name {
+    text-align: left;
+  }
+  table.marks-table td.grade-F {
+    color: #c0392b;
+    font-weight: 700;
+  }
+  table.marks-table td.grade-pass {
+    color: #1a7a32;
+    font-weight: 600;
+  }
+
+  table.sgpa-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  table.sgpa-table th, table.sgpa-table td {
+    border: 1px solid #ddd;
+    padding: 7px;
+    text-align: center;
+  }
+  table.sgpa-table th {
+    background: #f7f8fa;
+  }
+
+  .remarks {
+    margin-top: 14px;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .remarks.pass {
+    background: #e9f7ef;
+    color: #1a7a32;
+  }
+  .remarks.fail {
+    background: #fde8e8;
+    color: #a31515;
+  }
+
+  .note {
+    margin-top: 16px;
+    font-size: 12px;
+    color: #888;
+    line-height: 1.6;
+  }
+
+  .loader {
+    text-align: center;
+    padding: 30px;
+    color: #555;
+  }
+
+  .raw-box {
+    background: #f7f8fa;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 12px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card" role="main" aria-label="BEU Result Viewer">
-      <h2>BEU Result Checker</h2>
 
-      <div class="field">
-        <label for="redg">Reg. No</label>
-        <input id="redg" type="text" inputmode="numeric" placeholder="e.g. 23155150039" autocomplete="off" />
-      </div>
+<div class="container">
+  <div class="card">
+    <h1>BEU Result Viewer</h1>
+    <div class="subtitle">Bihar Engineering University, Patna &mdash; Student Result Portal</div>
 
-      <div class="field">
-        <label for="sem">Semester</label>
-        <select id="sem" aria-label="Semester">
-          <option>I</option><option>II</option><option selected>III</option><option>IV</option><option>V</option><option>VI</option><option>VII</option><option>VIII</option>
-        </select>
-      </div>
+    <form id="resultForm">
+      <div class="form-grid">
+        <div class="full">
+          <label for="redg_no">Registration Number</label>
+          <input type="text" id="redg_no" placeholder="e.g. 23155150021" required pattern="\d{5,20}" />
+        </div>
 
-      <div class="row">
-        <div class="col field">
-          <label for="month">Exam Month</label>
-          <select id="month" aria-label="Exam month">
-            <option>January</option><option>February</option><option>March</option><option>April</option><option>May</option><option>June</option><option selected>July</option><option>August</option><option>September</option><option>October</option><option>November</option><option>December</option>
+        <div>
+          <label for="semester">Semester</label>
+          <select id="semester" required>
+            <option value="">Select Semester</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
           </select>
         </div>
-        <div class="col field">
-          <label for="year">Exam Year</label>
-          <select id="year" aria-label="Exam year"></select>
+
+        <div>
+          <label for="exam_year">Exam Year</label>
+          <input type="number" id="exam_year" placeholder="e.g. 2025" min="2015" max="2035" required />
+        </div>
+
+        <div class="full">
+          <label for="exam_month">Exam Month</label>
+          <select id="exam_month" required>
+            <option value="">Select Month</option>
+            <option>January</option>
+            <option>February</option>
+            <option>March</option>
+            <option>April</option>
+            <option>May</option>
+            <option>June</option>
+            <option>July</option>
+            <option>August</option>
+            <option>September</option>
+            <option>October</option>
+            <option>November</option>
+            <option>December</option>
+          </select>
         </div>
       </div>
 
-      <button id="go">Get Result</button>
-
-      <div id="msg" class="muted" role="status" aria-live="polite"></div>
-
-      <div id="outBox" aria-live="polite"></div>
-
-      <div class="actions" style="display:block">
-        <button id="downloadPdf" class="btn-secondary">Download PDF</button>
-      </div>
-
-      <div style="text-align:center;margin-top:12px;color:var(--muted)">Made with ♥ by Aryan</div>
-    </div>
+      <button type="submit" id="submitBtn">Get Result</button>
+    </form>
   </div>
 
+  <div id="output"></div>
+</div>
+
 <script>
-  // populate years 2020-2030
-  (function(){
-    const sel = document.getElementById('year');
-    const start=2020,end=2030;
-    const cur=new Date().getFullYear();
-    for(let y=start;y<=end;y++){
-      const o=document.createElement('option'); o.value=y; o.textContent=y;
-      if(y===Math.min(Math.max(cur,start),end)) o.selected=true;
-      sel.appendChild(o);
-    }
-  })();
+const form = document.getElementById('resultForm');
+const output = document.getElementById('output');
+const submitBtn = document.getElementById('submitBtn');
 
-  const apiBase = '/api/result'; // make sure api/result.js exists on Vercel
+const MONTHS = {
+  January: '01', February: '02', March: '03', April: '04',
+  May: '05', June: '06', July: '07', August: '08',
+  September: '09', October: '10', November: '11', December: '12'
+};
 
-  document.getElementById('go').addEventListener('click', async ()=>{
-    const redg = document.getElementById('redg').value.trim();
-    const sem = document.getElementById('sem').value.trim();
-    const month = document.getElementById('month').value.trim();
-    const year = document.getElementById('year').value.trim();
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-    if(!redg){ alert('Enter registration number'); return; }
+  const redg_no = document.getElementById('redg_no').value.trim();
+  const semester = document.getElementById('semester').value;
+  const exam_month = document.getElementById('exam_month').value;
+  const exam_year = document.getElementById('exam_year').value.trim();
 
-    document.getElementById('msg').textContent = 'Loading...';
-    document.getElementById('outBox').innerHTML = '';
-
-    const url = `${apiBase}?redg_no=${encodeURIComponent(redg)}&semester=${encodeURIComponent(sem)}&exam_month=${encodeURIComponent(month)}&exam_year=${encodeURIComponent(year)}`;
-
-    try{
-      const r = await fetch(url);
-      const j = await r.json();
-
-      document.getElementById('msg').textContent = '';
-
-      if(j.error){ document.getElementById('outBox').textContent = 'Error: ' + j.error; return; }
-
-      const data = j.data || {};
-      // If BEU returned raw HTML/text:
-      if(data.raw){
-        document.getElementById('outBox').textContent = 'Server returned non-JSON response. Look in console for raw output.';
-        console.log('RAW BEU RESPONSE:', data.raw);
-        return;
-      }
-
-      // Format output exactly like your PDF sample.
-      // Top info table:
-      const tbl = document.createElement('table');
-      tbl.className = 'resultTable';
-      tbl.innerHTML = `
-        <tr><th>Registration No:</th><td>${escapeHtml(data.redg_no || redg || '')}</td></tr>
-        <tr><th>Semester:</th><td>${escapeHtml(data.semester || sem || '')}</td></tr>
-        <tr><th>Name:</th><td>${escapeHtml(data.name || data.student_name || '')}</td></tr>
-        <tr><th>Exam:</th><td>${escapeHtml(data.exam_held || (month + '/' + year) || '')}</td></tr>
-        <tr><th>College:</th><td>${escapeHtml(data.college_name || data.college || '')}</td></tr>
-        <tr><th>Course:</th><td>${escapeHtml(data.course || data.course_name || '')}</td></tr>
-      `;
-
-      // Subjects table (theory + practical)
-      const subjList = [];
-      if(Array.isArray(data.theorySubjects)) subjList.push(...data.theorySubjects);
-      if(Array.isArray(data.practicalSubjects)) subjList.push(...data.practicalSubjects);
-      if(Array.isArray(data.subjects)) subjList.push(...data.subjects);
-      if(Array.isArray(data.results)) subjList.push(...data.results);
-      // Remove duplicates by code
-      const byCode = {};
-      subjList.forEach(s=>{ if(s && s.code) byCode[s.code]=s; });
-      const subjects = Object.values(byCode);
-
-      let subjectsHtml = '';
-      if(subjects.length){
-        subjectsHtml += `<h3 style="margin-top:12px">Subjects</h3><table class="resultTable"><thead><tr><th>Code</th><th>Subject</th><th>IA</th><th>ESE</th><th>Total</th><th>Grade</th></tr></thead><tbody>`;
-        subjects.forEach(s=>{
-          const code = s.code||'';
-          const name = s.name||s.subject||'';
-          const ia = s.ia ?? s.internal ?? '';
-          const ese = s.ese ?? s.exam ?? '';
-          const total = s.total ?? '';
-          const grade = s.grade ?? s.result ?? '';
-          subjectsHtml += `<tr><td>${escapeHtml(code)}</td><td>${escapeHtml(name)}</td><td>${escapeHtml(String(ia))}</td><td>${escapeHtml(String(ese))}</td><td>${escapeHtml(String(total))}</td><td>${escapeHtml(String(grade))}</td></tr>`;
-        });
-        subjectsHtml += `</tbody></table>`;
-      }
-
-      // SGPA / CGPA: prefer direct fields if present
-      const sgpa = data.sgpa && Array.isArray(data.sgpa) ? data.sgpa[data.sgpa.length-1] : (data.sgpa || null);
-      const cgpa = data.cgpa || data.CGPA || null;
-
-      const sgpaLine = `<p style="margin-top:12px"><strong>SGPA / CGPA:</strong> ${escapeHtml(String(cgpa || sgpa || 'N/A'))}</p>`;
-
-      const container = document.getElementById('outBox');
-      container.innerHTML = '';
-      container.appendChild(tbl);
-      container.insertAdjacentHTML('beforeend', subjectsHtml);
-      container.insertAdjacentHTML('beforeend', sgpaLine);
-
-      // Save latest result for PDF download
-      window.latestResultData = { header: {
-        reg: data.redg_no || redg,
-        semester: data.semester || sem,
-        name: data.name || data.student_name || '',
-        exam: data.exam_held || (month + '/' + year),
-        college: data.college_name || data.college || '',
-        course: data.course || data.course_name || ''
-      }, subjects, cgpa: cgpa || sgpa || null };
-
-    }catch(err){
-      document.getElementById('msg').textContent = '';
-      document.getElementById('outBox').textContent = 'Fetch error: ' + (err.message || err);
-    }
-  });
-
-  // Download PDF — simple print-style
-  document.getElementById('downloadPdf').addEventListener('click', ()=>{
-    const d = window.latestResultData;
-    if(!d){ alert('Pehle result fetch karo'); return; }
-    const header = `<h2 style="color:#00c8ff">BEU Result</h2>
-      <p><strong>Registration No:</strong> ${escapeHtml(d.header.reg)} &nbsp; <strong>Semester:</strong> ${escapeHtml(d.header.semester)}</p>
-      <p><strong>Name:</strong> ${escapeHtml(d.header.name)}</p>
-      <p><strong>Exam:</strong> ${escapeHtml(d.header.exam)} &nbsp; <strong>College:</strong> ${escapeHtml(d.header.college)}</p>
-      <hr/>`;
-
-    let subjectsHtml = '<table style="width:100%;border-collapse:collapse">';
-    subjectsHtml += '<tr><th style="border:1px solid #ccc;padding:6px">Code</th><th style="border:1px solid #ccc;padding:6px">Subject</th><th style="border:1px solid #ccc;padding:6px">IA</th><th style="border:1px solid #ccc;padding:6px">ESE</th><th style="border:1px solid #ccc;padding:6px">Total</th><th style="border:1px solid #ccc;padding:6px">Grade</th></tr>';
-    (d.subjects || []).forEach(s=>{
-      subjectsHtml += `<tr>
-        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(s.code||'')}</td>
-        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(s.name||'')}</td>
-        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.ia||''))}</td>
-        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.ese||''))}</td>
-        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.total||''))}</td>
-        <td style="border:1px solid #ccc;padding:6px">${escapeHtml(String(s.grade||''))}</td>
-      </tr>`;
-    });
-    subjectsHtml += '</table>';
-
-    const footer = `<p style="margin-top:12px"><strong>SGPA / CGPA:</strong> ${escapeHtml(String(d.cgpa || 'N/A'))}</p>`;
-
-    const win = window.open('', '_blank', 'width=900,height=700');
-    win.document.write(`<html><head><meta charset="utf-8"><title>BEU Result</title></head><body style="font-family:Arial;padding:18px;color:#000">${header}${subjectsHtml}${footer}</body></html>`);
-    win.document.close();
-    setTimeout(()=>{ win.print(); }, 500);
-  });
-
-  function escapeHtml(s){
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  if (!redg_no || !semester || !exam_month || !exam_year) {
+    output.innerHTML = `<div class="card"><div class="error-box">Please fill all fields.</div></div>`;
+    return;
   }
+
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Fetching...';
+  output.innerHTML = `<div class="card"><div class="loader">Fetching result, please wait...</div></div>`;
+
+  try {
+    const params = new URLSearchParams({
+      redg_no, semester, exam_month, exam_year
+    });
+    const res = await fetch(`/api/result?${params.toString()}`);
+    const json = await res.json();
+
+    if (!res.ok) {
+      output.innerHTML = `<div class="card"><div class="error-box">${escapeHtml(json.error || 'Something went wrong.')}</div></div>`;
+      return;
+    }
+
+    renderResult(json.data);
+  } catch (err) {
+    output.innerHTML = `<div class="card"><div class="error-box">Network error: ${escapeHtml(String(err))}</div></div>`;
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Get Result';
+  }
+});
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function renderResult(data) {
+  // If BEU API returned something unexpected / raw text, show it for debugging
+  if (!data || data.raw || data.error) {
+    output.innerHTML = `
+      <div class="card">
+        <div class="error-box">Could not parse a structured result. Raw response below (this usually means the registration number / semester / exam period didn't match, or the BEU API response shape is different than expected).</div>
+        <div class="raw-box">${escapeHtml(JSON.stringify(data, null, 2))}</div>
+      </div>`;
+    return;
+  }
+
+  // Try to locate the actual result payload - BEU API shape may vary,
+  // so we defensively look in common places.
+  const result = data.data || data.result || data;
+
+  const student = result.student || result.studentInfo || result;
+  const theory = result.theory || result.theorySubjects || [];
+  const practical = result.practical || result.practicalSubjects || [];
+  const sgpaRow = result.sgpa || result.sgpaCgpa || null;
+  const remarks = result.remarks || result.remark || '';
+
+  let html = '<div class="card">';
+
+  html += `
+    <div class="result-header">
+      <h2>BIHAR ENGINEERING UNIVERSITY, PATNA</h2>
+      <div class="uni-sub">B.Tech Semester Examination Result</div>
+    </div>`;
+
+  html += `<table class="info-table"><tbody>`;
+  html += infoRow('Registration No', student.redg_no || student.registration_no || student.reg_no);
+  html += infoRow('Student Name', student.name || student.student_name);
+  html += infoRow("Father's Name", student.father_name || student.fathers_name);
+  html += infoRow("Mother's Name", student.mother_name || student.mothers_name);
+  html += infoRow('College Name', student.college_name || student.college);
+  html += infoRow('Course Name', student.course_name || student.course);
+  html += infoRow('Semester', student.semester || result.semester);
+  html += `</tbody></table>`;
+
+  if (Array.isArray(theory) && theory.length) {
+    html += `<h3 class="section-title">Theory</h3>`;
+    html += renderMarksTable(theory);
+  }
+
+  if (Array.isArray(practical) && practical.length) {
+    html += `<h3 class="section-title">Practical</h3>`;
+    html += renderMarksTable(practical);
+  }
+
+  if (sgpaRow) {
+    html += `<h3 class="section-title">SGPA / CGPA</h3>`;
+    html += renderSgpaTable(sgpaRow);
+  }
+
+  if (remarks) {
+    const isFail = /fail/i.test(remarks);
+    html += `<div class="remarks ${isFail ? 'fail' : 'pass'}">Remarks: ${escapeHtml(String(remarks))}</div>`;
+  }
+
+  html += `
+    <div class="note">
+      ESE: End Semester Exam &middot; IA: Internal Assessment &middot; SGPA: Semester Grade Point Average &middot; CGPA: Cumulative Grade Point Average<br/>
+      This is an unofficial viewer fetching data from the BEU result API. Not valid for official purposes.
+    </div>`;
+
+  html += '</div>';
+
+  // Also show raw JSON in a collapsible-style box for transparency / debugging
+  html += `
+    <div class="card">
+      <h3 class="section-title">Raw API Response</h3>
+      <div class="raw-box">${escapeHtml(JSON.stringify(data, null, 2))}</div>
+    </div>`;
+
+  output.innerHTML = html;
+}
+
+function infoRow(label, value) {
+  return `<tr><td class="label">${escapeHtml(label)}</td><td>${escapeHtml(value ?? '-')}</td></tr>`;
+}
+
+function renderMarksTable(subjects) {
+  let html = `<table class="marks-table"><thead><tr>
+    <th>Code</th><th>Subject</th><th>ESE</th><th>IA</th><th>Total</th><th>Grade</th><th>Credit</th>
+  </tr></thead><tbody>`;
+
+  subjects.forEach(sub => {
+    const grade = sub.grade || sub.Grade || '';
+    const gradeClass = grade === 'F' ? 'grade-F' : (grade ? 'grade-pass' : '');
+    html += `<tr>
+      <td>${escapeHtml(sub.code || sub.subject_code || '-')}</td>
+      <td class="subject-name">${escapeHtml(sub.name || sub.subject_name || '-')}</td>
+      <td>${escapeHtml(sub.ese ?? sub.ESE ?? '-')}</td>
+      <td>${escapeHtml(sub.ia ?? sub.IA ?? '-')}</td>
+      <td>${escapeHtml(sub.total ?? sub.Total ?? '-')}</td>
+      <td class="${gradeClass}">${escapeHtml(grade || '-')}</td>
+      <td>${escapeHtml(sub.credit ?? sub.Credit ?? '-')}</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table>`;
+  return html;
+}
+
+function renderSgpaTable(sgpaRow) {
+  // sgpaRow expected to be an object like { I: 6.71, II: 6.14, ..., curCgpa: 6.39 }
+  // or an array of {semester, sgpa}. Handle both defensively.
+  const semesters = ['I','II','III','IV','V','VI','VII','VIII'];
+  let html = `<table class="sgpa-table"><thead><tr><th></th>`;
+  semesters.forEach(s => html += `<th>${s}</th>`);
+  html += `<th>Cur. CGPA</th></tr></thead><tbody><tr><td>SGPA</td>`;
+
+  if (Array.isArray(sgpaRow)) {
+    semesters.forEach((s, idx) => {
+      const entry = sgpaRow[idx];
+      html += `<td>${escapeHtml(entry?.sgpa ?? entry?.value ?? '-')}</td>`;
+    });
+    html += `<td>${escapeHtml(sgpaRow.cgpa ?? '-')}</td>`;
+  } else {
+    semesters.forEach(s => {
+      html += `<td>${escapeHtml(sgpaRow[s] ?? '-')}</td>`;
+    });
+    html += `<td>${escapeHtml(sgpaRow.curCgpa ?? sgpaRow.cgpa ?? '-')}</td>`;
+  }
+
+  html += `</tr></tbody></table>`;
+  return html;
+}
 </script>
+
 </body>
 </html>
